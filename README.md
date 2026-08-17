@@ -805,6 +805,75 @@ ${S}/arch/arm64/boot/dts/rockchip/
 patch 文件生成、bbappend 增加互斥选择逻辑并通过 `do_patch` 验证后，才能启用
 patch 模式。
 
+#### DTS 与 patch 模式的选择方法
+
+计划使用下面的变量作为唯一选择入口：
+
+```bitbake
+KICKPI_DTS_MODE = "files"
+```
+
+允许值为：
+
+| 值 | 作用 | 当前状态 |
+| --- | --- | --- |
+| `files` | 从 `files/kickpi-k7/` 复制可读 DTS/DTSI | 已实现，当前默认方案 |
+| `patch` | 应用 `files/patches/` 中的标准内核 patch | 未实现，必须先生成 patch |
+
+patch 模式实现并验证后，可以在 `build/conf/local.conf` 中临时选择：
+
+```bitbake
+# 使用可读 DTS/DTSI，适合学习和开发
+KICKPI_DTS_MODE = "files"
+```
+
+或者：
+
+```bitbake
+# 使用标准内核 patch，适合验证上游提交形式
+KICKPI_DTS_MODE = "patch"
+```
+
+如果确实需要只对一条命令传入该变量，必须显式允许 BitBake 从 Shell 环境导入
+它，不能只在命令前写变量名：
+
+```bash
+BB_ENV_PASSTHROUGH_ADDITIONS="KICKPI_DTS_MODE" \
+KICKPI_DTS_MODE=files \
+MACHINE=kickpi-k7 \
+bitbake -c patch virtual/kernel
+```
+
+日常开发更推荐修改 `local.conf`，可读性更好，也不容易忘记当前模式。
+
+检查最终选择值：
+
+```bash
+MACHINE=kickpi-k7 bitbake -e virtual/kernel | \
+    grep '^KICKPI_DTS_MODE='
+```
+
+检查 `SRC_URI` 实际取用了 DTS 还是 patch：
+
+```bash
+MACHINE=kickpi-k7 bitbake -e virtual/kernel | \
+    grep '^SRC_URI=' | grep -E 'rk3576-kickpi-k7|add-kickpi-k7\.patch'
+```
+
+切换模式后，BitBake 通常会根据任务签名自动重新执行。需要明确重复验证
+`do_patch` 时可以使用 `-f` 强制执行：
+
+```bash
+MACHINE=kickpi-k7 bitbake -f -c patch virtual/kernel
+```
+
+bbappend 最终必须验证 `KICKPI_DTS_MODE` 只能是 `files` 或 `patch`，并保证两套
+输入互斥，不能在一次构建中既复制 DTS 又应用包含相同 DTS 的 patch。
+
+> 当前状态：`linux-rockchip_6.1.bbappend` 尚未定义 `KICKPI_DTS_MODE`，实际
+> 始终使用可读 DTS/DTSI。现在即使在 `local.conf` 中写成 `patch` 也不会切换；
+> 等 patch 文件生成后，再实现并验证选择逻辑。
+
 ### C2. 把保存的 DTS 接入 linux-rockchip 6.1
 
 K7 文件来自 Rockchip vendor 6.1 内核，因此使用版本明确的 bbappend，不假定
