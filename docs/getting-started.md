@@ -383,5 +383,6 @@ MACHINE=kickpi-k7 bitbake -e virtual/kernel | \
 5. 为什么 `bitbake -e virtual/kernel` 成功不代表内核编译成功？
 6. K7 DTS 从 layer 进入内核源码，是哪一段配置和任务完成的？
 
-能解释这六点，就可以按 [学习计划第 2 章](../LEARNING.md#2-理解任务从-fetch-到-deploy)
-继续学习任务和日志。已有构建结果可以用于观察，不必删除重做。
+这些问题用于自测工程基础，不代表某个组件阶段已完成。主线统一按
+[学习计划](../LEARNING.md) 的 rootfs → Kernel → 完整启动链 → 系统集成 → SDK
+推进，从新项目视角理解和验证，不按历史构建进度跳过学习。

@@ -5,11 +5,16 @@
 
 ## 学习入口
 
-首次接触本工程，先读 [从零认识当前 K7 Yocto 工程](docs/getting-started.md)：
-结合实际文件讲解 repo、manifest、layer、machine 和 BitBake，可独立阅读。
+从 [从零学习 K7 Linux 系统开发](LEARNING.md) 开始，将本仓库作为新项目学习，
+不按已有代码或历史构建进度跳过内容。唯一主线为：
 
-从 [学习计划](LEARNING.md) 开始。学习顺序、实验任务和完成标准统一在该文档
-维护，原 A–I 和 L0–L9 两套计划已删除。
+**rootfs → Kernel → 完整启动链 → 系统集成 → SDK**
+
+完整启动链涵盖 BootROM、DDR 初始化、早期 loader、可信固件和 U-Boot，
+具体组件按 K7 实际方案核实。
+
+[工程入门教材](docs/getting-started.md) 用于按需查阅 repo、manifest、layer、
+machine 和 BitBake 的基础概念，不作为另一套学习路径。
 
 操作参考：
 
