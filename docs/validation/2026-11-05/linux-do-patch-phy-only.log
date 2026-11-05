@@ -1,0 +1,193 @@
+DEBUG: Executing python function extend_recipe_sysroot
+NOTE: Direct dependencies are ['/home/ryan/Yocto/workspace-k7/build-k7/../sources/openembedded-core/meta/recipes-devtools/quilt/quilt-native_0.69.bb:do_populate_sysroot', '/home/ryan/Yocto/workspace-k7/build-k7/../sources/openembedded-core/meta/recipes-kernel/kern-tools/kern-tools-native_git.bb:do_populate_sysroot', 'virtual:native:/home/ryan/Yocto/workspace-k7/build-k7/../sources/openembedded-core/meta/recipes-devtools/patch/patch_2.8.bb:do_populate_sysroot']
+NOTE: Installed into sysroot: []
+NOTE: Skipping as already exists in sysroot: ['gettext-minimal-native', 'cmake-native', 'libtool-native', 'quilt-native', 'texinfo-dummy-native', 'kern-tools-native', 'openssl-native', 'expat-native', 'ncurses-native', 'zlib-native', 'git-native', 'make-native', 'patch-native', 'perl-native', 'bzip2-native', 'xz-native', 'zstd-native', 'attr-native', 'curl-native', 'gdbm-native']
+DEBUG: Python function extend_recipe_sysroot finished
+DEBUG: Executing shell function do_patch
+(1/1) 004-add-PHY-for-MAE0621A-Q2C.patch
+DEBUG: Shell function do_patch finished
+DEBUG: Executing python function do_qa_patch
+DEBUG: Searching for defconfig in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/defconfig for defconfig
+DEBUG: Searching for 004-add-PHY-for-MAE0621A-Q2C.patch in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/004-add-PHY-for-MAE0621A-Q2C.patch for 004-add-PHY-for-MAE0621A-Q2C.patch
+DEBUG: Searching for rk3576-kickpi-k7.dts in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rk3576-kickpi-k7.dts for rk3576-kickpi-k7.dts
+DEBUG: Searching for rk3576-kickpi-k7-cam0.dtsi in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rk3576-kickpi-k7-cam0.dtsi for rk3576-kickpi-k7-cam0.dtsi
+DEBUG: Searching for rk3576-kickpi-k7-cam1.dtsi in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rk3576-kickpi-k7-cam1.dtsi for rk3576-kickpi-k7-cam1.dtsi
+DEBUG: Searching for rk3576-kickpi-k7-cam3.dtsi in paths:
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/nodistro
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/rockchip
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/kickpi-k7
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/cortexa72-cortexa53
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/aarch64
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip-6.1/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/linux-rockchip/
+    /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-rockchip/recipes-kernel/linux/files/
+DEBUG: Using /home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/rk3576-kickpi-k7-cam3.dtsi for rk3576-kickpi-k7-cam3.dtsi
+NOTE: QA Issue: Missing Upstream-Status in patch
+/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-kernel/linux/files/kickpi-k7/004-add-PHY-for-MAE0621A-Q2C.patch
+Please add according to https://docs.yoctoproject.org/contributor-guide/recipe-style-guide.html#patch-upstream-status . [patch-status]
+DEBUG: Python function do_qa_patch finished

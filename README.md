@@ -1,55 +1,37 @@
 # meta-kickpi
 
-以 KickPi K7（RK3576）为对象的 Yocto、设备树和 Linux 启动链学习仓库。
-当前使用 Scarthgap 与 meta-rockchip 的 Linux 6.1 配方。
+KICKPI K7（RK3576）的自有 Yocto BSP。当前开发基线是 Wrynose、Yocto 维护的 Linux 6.18.52
+和官方 U-Boot 2026.10。厂商 Armbian SDK 用于硬件参考；社区 meta-rockchip 是通用代码的复用目标，尚未加入当前构建。
 
-## 学习入口
+当前已完成 U-Boot、Linux 内核、ext4/WIC 镜像和标准 SDK 构建。WIC 布局和启动文件已离线核对；SDK 安装、应用编译和真机启动尚未验收。
 
-从 [从零学习 K7 Linux 系统开发](LEARNING.md) 开始，将本仓库作为新项目学习，
-不按已有代码或历史构建进度跳过内容。唯一主线为：
+## 设计与操作入口
 
-**rootfs → Kernel → 完整启动链 → 系统集成 → SDK**
+- [代码设计方案与分阶段改造清单](docs/code-design.md)
+- [社区与 JeffyCN BSP 选型比较](docs/meta-rockchip-comparison.md)
+- [当前 Linux 6.18 构建入口](docs/k7-linux-yocto.md)
+- [当前主线 U-Boot 构建与验证](docs/k7-mainline-uboot.md)
+- [历史迁移记录与 SDK 基础教材](docs/k7-yocto-build.md)
 
-完整启动链涵盖 BootROM、DDR 初始化、早期 loader、可信固件和 U-Boot，
-具体组件按 K7 实际方案核实。
-
-[工程入门教材](docs/getting-started.md) 用于按需查阅 repo、manifest、layer、
-machine 和 BitBake 的基础概念，不作为另一套学习路径。
-
-操作参考：
-
-- [Layer 配置](docs/layer.md)
-- [Machine 配置与 BitBake 环境解析](docs/machine.md)
-- [设备树注入、patch 生成与模式选择](docs/device-tree.md)
-
-## 目录
+## 当前代码
 
 ```text
-meta-kickpi/
-├── README.md
-├── LEARNING.md
-├── docs/
-├── conf/
-│   ├── layer.conf
-│   └── machine/kickpi-k7.conf
-└── recipes-kernel/linux/
-    ├── linux-rockchip_6.1.bbappend
-    └── files/kickpi-k7/           # 四个可读 DTS/DTSI
+conf/machine/kickpi-k7.conf            # 独立 CPU/板卡与 provider 选择
+recipes-bsp/u-boot/                   # 官方 U-Boot、K7 DTS/defconfig、固件输入
+recipes-kernel/linux/
+  linux-yocto_6.18.bbappend            # 扩展 OE-Core 维护的内核
+  files/yocto-k7/                     # 当前 Linux DT 和内核配置
+  files/kickpi-k7/                    # 旧厂商参考文件，当前不应用
+recipes-core/images/                 # 当前产品镜像与 extlinux，规划拆分
+wic/                                 # 当前 GPT/ext4 布局
+docs/                               # 设计、操作、验证与历史资料
 ```
 
-设备树来源：工作区的 `kickpi-armbian/patch/kernel/rk35xx-vendor-6.1/dt/`。
-Linux 与 U-Boot 的同名 DTS 需分别处理。
+旧厂商追加配方存放在 docs/legacy/vendor-bsp/*.disabled，不参加构建。
+Linux 与 U-Boot 的设备树分别维护，不能因同名就互换。
 
-## 实验约定
+操作均从 workspace-k7 初始化到 build-k7。配置和验证结果见上述当前入口；
+不要将历史文档中的厂商烧录偏移应用到主线镜像。
 
-files 与 patch 是独立学习实验，允许内容不同；每次构建只使用一种。
-当前已接入 files 路径，patch 文件和互斥模式开关尚未实现。
-解析成功不等于设备树编译成功，更不等于硬件已验证。
-
-文档保存在 `sources/meta-kickpi` Git 仓库。工作区根目录 README 是本文件的
-软链接；若编辑器按根目录解析相对链接，请直接打开
-`sources/meta-kickpi/LEARNING.md`。
-
+修改前检查 Git 状态，repo detached HEAD 应先创建开发分支。
 仓库远端：https://github.com/Aclass-Linux/meta-kickpi.git
-
-开始修改前检查 Git 状态；repo 检出的 detached HEAD 应先建立开发分支。

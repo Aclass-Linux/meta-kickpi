@@ -1,0 +1,4 @@
+# Mainline combined loader starts at LBA64; leave 16 MiB before rootfs.
+bootloader --ptable gpt
+part --source rawcopy --sourceparams="file=u-boot-rockchip.bin" --offset 32K --no-table
+part / --source rootfs --fstype ext4 --label rootfs --uuid 614e0000-0000-4b53-8000-1d28000054a9 --align 16384

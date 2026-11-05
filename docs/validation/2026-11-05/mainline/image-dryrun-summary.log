@@ -1,0 +1,8 @@
+NOTE: Running task 4738 of 4742 (/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-core/images/kickpi-image-minimal.bb:do_image_complete)
+NOTE: Running task 4739 of 4742 (/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-core/images/kickpi-image-minimal.bb:do_create_image_spdx)
+NOTE: Running task 4740 of 4742 (/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-core/images/kickpi-image-minimal.bb:do_populate_lic_deploy)
+NOTE: Running task 4741 of 4742 (/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-core/images/kickpi-image-minimal.bb:do_create_image_sbom_spdx)
+NOTE: Running noexec task 4742 of 4742 (/home/ryan/Yocto/workspace-k7/build-k7/../sources/meta-kickpi/recipes-core/images/kickpi-image-minimal.bb:do_build)
+NOTE: Tasks Summary: Attempted 4742 tasks of which 1260 didn't need to be rerun and all succeeded.
+
+Summary: There was 1 WARNING message.

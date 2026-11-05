@@ -1,0 +1,13 @@
+{
+  "status": "installer-generated-not-installed-or-target-tested",
+  "installer": "oecore-kickpi-image-minimal-x86_64-cortexa72-cortexa53-kickpi-k7-toolchain-nodistro.0.sh",
+  "bytes": 290649571,
+  "sha256": "3b984cc4def08ec75c265ceded6ae4c69a86ca2ec232aa30e5b6bfcfdb2c7acb",
+  "host_arch": "x86_64",
+  "target_arch": "aarch64",
+  "gcc_version": "15.3.0",
+  "manifests": [
+    "oecore-kickpi-image-minimal-x86_64-cortexa72-cortexa53-kickpi-k7-toolchain-nodistro.0.host.manifest",
+    "oecore-kickpi-image-minimal-x86_64-cortexa72-cortexa53-kickpi-k7-toolchain-nodistro.0.target.manifest"
+  ]
+}

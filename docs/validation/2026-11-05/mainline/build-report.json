@@ -1,0 +1,25 @@
+{
+  "upstream_commit": "5508406582f6f7120dce0c4b3059819a41788db2",
+  "artifacts": {
+    "u-boot-rockchip.bin": {
+      "bytes": 9379328,
+      "sha256": "f6fde24b4e84504df2d64830e64298cfc6fe5cf168f2a281d61e83c49a9e33d5"
+    },
+    "idbloader.img": {
+      "bytes": 190464,
+      "sha256": "2377af527d5e4dbdad966b2bb898c136c833a1f012608dd49443bc0fc8364a31"
+    },
+    "u-boot.itb": {
+      "bytes": 1023488,
+      "sha256": "cbb1dc42424fe0747ffa221e65a2e79a6a81e04095c9623b759825aaa687f4c4"
+    },
+    "u-boot.dtb": {
+      "bytes": 174160,
+      "sha256": "cf8f57efeeea431b1343f7966a17a20eab98c253eb36ff33c1bbd4582ce13256"
+    }
+  },
+  "fit_offset_in_combined": "0x7f8000",
+  "combined_disk_offset_bytes": 32768,
+  "root_partition_start_bytes": 16777216,
+  "hardware_boot_tested": false
+}

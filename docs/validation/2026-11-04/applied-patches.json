@@ -1,0 +1,12 @@
+[
+  {
+    "patch": "0001-kbuild-use-fmacro-prefix-map-to-make-__FILE__-a-rela.patch",
+    "exit_code": 0,
+    "output": "patching file Makefile\n"
+  },
+  {
+    "patch": "0003-Revert-Makefile-enable-Werror-option.patch",
+    "exit_code": 0,
+    "output": "patching file Makefile\n"
+  }
+]

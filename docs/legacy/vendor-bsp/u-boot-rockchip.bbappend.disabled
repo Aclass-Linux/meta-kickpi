@@ -1,0 +1,33 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI:append:kickpi-k7 = " file://rk3576-kickpi-k7.dts file://kickpi-k7-rk3576_defconfig"
+
+do_kickpi_sources() {
+    install -m 0644 ${UNPACKDIR}/rk3576-kickpi-k7.dts ${S}/arch/arm/dts/
+    install -m 0644 ${UNPACKDIR}/kickpi-k7-rk3576_defconfig ${S}/configs/
+}
+
+# Vendor U-Boot source; keep the BSP's rkbin fetch and image packaging tasks.
+SRCREV:kickpi-k7 = "39cd993e5d6296635438e84f4576b3a9bf76f86e"
+SRC_URI:remove:kickpi-k7 = "git://github.com/JeffyCN/mirrors.git;protocol=https;branch=u-boot;"
+SRC_URI:append:kickpi-k7 = " git://github.com/radxa/u-boot.git;protocol=https;branch=next-dev-v2024.10"
+
+# Match the vendor K7 DDR choice and fail rather than silently use another blob.
+do_configure:prepend:kickpi-k7() {
+    install -m 0644 ${UNPACKDIR}/rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin ${UNPACKDIR}/rkbin/bin/rk35/
+    rkbin="${UNPACKDIR}/rkbin"
+    ddr="rk35/rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin"
+    test -f "${UNPACKDIR}/rkbin/bin/${ddr}" || bbfatal "K7 DDR blob missing: ${ddr}"
+    ini="${UNPACKDIR}/rkbin/RKBOOT/RK3576MINIALL.ini"
+    test -f "${ini}" || bbfatal "RK3576MINIALL.ini missing"
+    sed -i "s|^FlashData=.*|FlashData=bin/${ddr}|; s|^Path1=.*rk3576_ddr.*|Path1=bin/${ddr}|" "${ini}"
+}
+
+addtask kickpi_sources after do_patch before do_configure
+
+# The vendor tree already contains the BSP dtoc/Python3 patch.
+# Keep only the build path mapping patch; retain vendor -Werror.
+PATCHPATH:kickpi-k7 = ""
+SRC_URI:append:kickpi-k7 = " file://0001-kbuild-use-fmacro-prefix-map-to-make-__FILE__-a-rela.patch file://rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin"
+SRC_URI:remove:kickpi-k7 = "git://github.com/JeffyCN/mirrors.git;protocol=https;branch=u-boot; git://github.com/JeffyCN/mirrors.git;protocol=https;branch=rkbin;name=rkbin;destsuffix=rkbin;"
+SRC_URI:append:kickpi-k7 = " git://github.com/rockchip-linux/rkbin.git;protocol=https;branch=master;name=rkbin;destsuffix=rkbin"
+SRCREV_rkbin:kickpi-k7 = "3e288fe814e059dd06833495f845cab04ac20a5c"
