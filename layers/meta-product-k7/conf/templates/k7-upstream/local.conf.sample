@@ -1,0 +1,9 @@
+# Development bring-up profile, not a production authentication policy.
+MACHINE = "kickpi-k7"
+SDKMACHINE = "x86_64"
+PACKAGE_CLASSES = "package_ipk"
+EXTRA_IMAGE_FEATURES = "empty-root-password allow-empty-password"
+USER_CLASSES ?= "buildstats"
+PATCHRESOLVE = "noop"
+CONF_VERSION = "2"
+# Set DL_DIR, SSTATE_DIR and build parallelism locally as needed.

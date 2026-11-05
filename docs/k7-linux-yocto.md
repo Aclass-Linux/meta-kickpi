@@ -46,6 +46,9 @@ K7 电源管理和休眠已完成。需要按原理图核对 RK806、SD/eMMC 电
 
 ## 操作步骤
 
+当前镜像位于同仓库的 `layers/meta-product-k7`；已有 build-k7 必须在 BBLAYERS 中同时
+启用仓库根 BSP 和产品 layer。新工作区及已有构建目录的操作见 [产品层说明](product-layer.md)。
+
 ```bash
 bash
 cd /home/ryan/Yocto/workspace-k7

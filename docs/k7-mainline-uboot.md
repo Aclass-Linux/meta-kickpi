@@ -34,8 +34,8 @@ U-Boot 网络启动、显示、触摸、充电动画、Wi-Fi、UFS、NVMe、SPI 
 - recipes-bsp/u-boot/u-boot-k7-mainline_2026.10.bb：主线源码、固件依赖、构建和部署。
 - recipes-bsp/u-boot/files/mainline/：K7 主线 DTS、SPL DTSI、defconfig。
 - conf/machine/kickpi-k7.conf：选择新 provider，内核只生成普通 Image。
-- wic/kickpi-k7-mainline.wks.in：GPT + 32KiB 处的合并 loader + 16MiB 对齐的 ext4 根分区。
-- recipes-core/images/kickpi-image-minimal.bb：独立 WIC/extlinux 组装，不继承厂商 rockchip-image。
+- layers/meta-product-k7/wic/kickpi-k7-mainline.wks.in：GPT + 32KiB 处的合并 loader + 16MiB 对齐的 ext4 根分区。
+- layers/meta-product-k7/recipes-core/images/kickpi-image-minimal.bb：独立 WIC/extlinux 组装，不继承厂商 rockchip-image。
 
 合并镜像内的 SPL/FIT 偏移由主线 binman 决定，不能再把厂商 uboot.img 写到旧分区偏移。
 根分区内存放 /boot/Image、/boot/rk3576-kickpi-k7.dtb、/boot/extlinux/extlinux.conf。

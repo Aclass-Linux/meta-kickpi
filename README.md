@@ -7,6 +7,7 @@ KICKPI K7（RK3576）的自有 Yocto BSP。当前开发基线是 Wrynose、Yocto
 
 ## 设计与操作入口
 
+- [BSP/产品层拆分与构建步骤](docs/product-layer.md)
 - [代码设计方案与分阶段改造清单](docs/code-design.md)
 - [社区与 JeffyCN BSP 选型比较](docs/meta-rockchip-comparison.md)
 - [当前 Linux 6.18 构建入口](docs/k7-linux-yocto.md)
@@ -22,8 +23,12 @@ recipes-kernel/linux/
   linux-yocto_6.18.bbappend            # 扩展 OE-Core 维护的内核
   files/yocto-k7/                     # 当前 Linux DT 和内核配置
   files/kickpi-k7/                    # 旧厂商参考文件，当前不应用
-recipes-core/images/                 # 当前产品镜像与 extlinux，规划拆分
-wic/                                 # 当前 GPT/ext4 布局
+layers/meta-product-k7/              # 产品 layer（与 BSP 同仓库，单独启用）
+  conf/include/                     # GPT/extlinux 共用启动布局
+  conf/templates/k7-upstream/        # 开发构建配置模板
+  recipes-core/images/              # kickpi-image-minimal
+  recipes-core/boot-config/         # DTB/extlinux 文件包，依赖内核镜像包
+  wic/                              # GPT/ext4 分区布局
 docs/                               # 设计、操作、验证与历史资料
 ```
 

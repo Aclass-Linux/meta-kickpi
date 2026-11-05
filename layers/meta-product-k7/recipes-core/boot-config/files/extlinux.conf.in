@@ -1,0 +1,6 @@
+default k7
+timeout 30
+label k7
+    linux /boot/@KERNEL_IMAGE@
+    fdt /boot/@KERNEL_DTB@
+    append earlycon console=@CONSOLE_DEVICE@,@CONSOLE_BAUD@ root=PARTUUID=@ROOT_PARTUUID@ rootfstype=@ROOT_FSTYPE@ rootwait rw

@@ -1,0 +1,9 @@
+LCONF_VERSION = "7"
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+BBLAYERS ?= " \
+  ##OEROOT##/meta \
+  ##OEROOT##/../meta-openembedded/meta-oe \
+  ##OEROOT##/../meta-kickpi \
+  ##OEROOT##/../meta-kickpi/layers/meta-product-k7 \
+  "

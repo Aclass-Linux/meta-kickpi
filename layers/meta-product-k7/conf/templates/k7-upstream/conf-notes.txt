@@ -1,0 +1,4 @@
+K7 serial/MMC development profile (root has an empty password).
+Build image: bitbake kickpi-image-minimal
+Build SDK:   bitbake kickpi-image-minimal -c populate_sdk
+Hardware boot and production qualification are separate steps.

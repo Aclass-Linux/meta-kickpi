@@ -1,5 +1,8 @@
 # KICKPI K7：从厂商 Armbian 到 Yocto 的操作手册
 
+当前产品层已拆到同仓库 `layers/meta-product-k7`；当前构建配置和入口以
+[产品层说明](product-layer.md)为准。本文历史步骤中的旧布局不作为当前配置模板。
+
 > 当前内核已切换到 [Yocto Linux 6.18](k7-linux-yocto.md)，此文包含旧厂商 6.1 迁移历史。
 > 当前已开始主线 U-Boot 迁移。请优先阅读 [K7 主线适配](k7-mainline-uboot.md)。
 > 本文的厂商打包命令和补丁状态包含历史记录，不能用于主线镜像烧录。

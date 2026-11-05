@@ -32,7 +32,8 @@ K7 板级差异与产品策略。厂商 SDK 用于核对引脚、供电、固件
 
 ## 3. 仓库和 layer 的职责
 
-以下为目标结构；前两项为现有仓库，platform 和产品层为规划。
+当前 BSP 根目录保留，产品层已实现为同仓库的 layers/meta-product-k7。
+下面的平台独立仓库、包组和产品专用发行版仍为后续规划；不要求一个 layer 对应一个 Git 仓库。
 
 ```text
 yocto-manifests/                  # 已有：repo XML、来源和固定 SHA
@@ -41,14 +42,15 @@ meta-kickpi/                      # 已有：K7 BSP
   recipes-bsp/                    # U-Boot、启动固件适配
   recipes-kernel/                 # Yocto 内核追加、K7 DTS、配置
   docs/                          # 构建、设计、验证、历史资料
-meta-product-k7/                  # 规划：镜像、包集合、SDK、系统策略
-  conf/include/                  # 产品启动布局、版本配置
+meta-kickpi/layers/meta-product-k7/ # 已实现：产品镜像、启动配置与开发模板
+  conf/include/                  # 已实现：产品启动布局
+  conf/templates/k7-upstream/     # 已实现：开发构建模板
   recipes-core/images/           # 产品镜像
-  recipes-core/packagegroups/    # 存储/网络/诊断等软件包集合
+  recipes-core/packagegroups/    # 规划：按实际应用需求添加
   recipes-core/boot-config/      # 版本化 extlinux 配置与安装配方
   wic/                           # 产品分区布局
-  docs/                          # 产品发布与运行说明
-yocto-platform/                  # 规划：配置模板、CI、发布清单和操作文档
+  文档见仓库根 docs/product-layer.md
+yocto-platform/                  # 规划：CI、发布清单和操作文档
   conf/templates/k7-upstream/    # local.conf.sample、bblayers.conf.sample
   ci/                            # 构建与检查定义
 ```
@@ -71,9 +73,9 @@ layer 不包含本机绝对路径，不读取 /home/ryan/Yocto/kickpi-armbian �
 | files/mainline/* | U-Boot 板级文件 | 与 Linux DTS 分别演进，逐项核对共有硬件信息 |
 | u-boot-k7-mainline_2026.10.bb | BSP 引导器配方 | 继续复用 OE-Core u-boot.inc，不保留厂商 make.sh 路径 |
 | U-Boot 配方内获取 rkbin | 规划：独立启动固件配方 | 提供已验证 DDR/BL31 部署产物，U-Boot 通过任务依赖消费 |
-| kickpi-image-minimal.bb | 规划：meta-product-k7 | 保留用户可用 target 名称，移动时避免两个同名 recipe |
-| 镜像内 shell 生成 extlinux | 规划：产品 boot-config 配方 | 使用模板安装，输出内容可单独审查与打包 |
-| WKS | 规划：meta-product-k7/wic | 单一启动布局变量来源 |
+| kickpi-image-minimal.bb | 已移入 layers/meta-product-k7 | 保留用户可用 target 名称，移动时避免两个同名 recipe |
+| 镜像内 shell 生成 extlinux | 已改为 k7-boot-files 配方 | 使用模板安装，输出内容可单独审查与打包 |
+| WKS | 已移入 layers/meta-product-k7/wic | 单一启动布局变量来源 |
 | docs/legacy 与旧厂商副本 | 参考资料 | 不匹配活动 BBFILES，不自动应用 |
 | build-k7/conf | 由模板生成的本地配置 | 保留本机参数，产品策略逐步迁回 layer |
 
@@ -142,9 +144,9 @@ DDR 当前使用厂商 v1.08；BL31 使用固定 rkbin 的 v1.25。该组合已�
 当前协议保留：GPT；合并 loader 在 32KiB；根分区从 16MiB 对齐开始；ext4；
 根分区内 /boot/Image、K7 Linux DTB 和 /boot/extlinux/extlinux.conf。
 
-重构时将以下内容设为唯一变量来源，由 WKS 和 extlinux 模板共同消费：
+已将以下内容设为唯一变量来源，由 WKS 和 extlinux 模板共同消费：
 
-| 变量（规划） | 归属 | 当前值/约束 |
+| 变量（已实现） | 归属 | 当前值/约束 |
 | --- | --- | --- |
 | K7_CONSOLE_DEVICE / K7_CONSOLE_BAUD | BSP | ttyS0 / 1500000，并派生 SERIAL_CONSOLES |
 | K7_ROOT_PARTUUID | 产品布局 include | 当前 614e0000-0000-4b53-8000-1d28000054a9 |
@@ -220,7 +222,12 @@ P0/P1 先于大规模目录移动；不把尚未启动的开发代码直接标�
 - WIC：Linux 切换后已真实生成，GPT、loader、根分区与启动文件已离线核对。
 - 标准 SDK：安装器已生成；安装、交叉编译应用和板上运行尚未验收。真机启动、PMIC、电压/温控、网络仍待验收。
 - 已知配置检查点：USB2 PHY 的 EXTCON 依赖需在 P0 核对，不能将 USB 写入已验证功能列表。
-- 本地仍有未提交改动，manifest 仍指向旧 layer；源版本发布前不能承诺 repo sync 即复现。
+- 拆分前基线已提交为 f5698b4；当前推送受 GitHub 认证阻塞。只有先推送 layer、再推送更新后的 manifest，其他机器才能 repo sync。
 
 操作入口：[Yocto 内核](k7-linux-yocto.md)、[主线 U-Boot](k7-mainline-uboot.md)。
 参考：[BSP 选型比较](meta-rockchip-comparison.md)、[历史迁移/SDK 教材](k7-yocto-build.md)。
+
+## 13. 当前分层实现
+
+见 [产品层操作文档](product-layer.md)。本轮只拆分镜像、启动文件包、WIC 和构建模板；
+固件独立配方、业务包组、产品 DISTRO、CI 和量产策略仍属后续工作。
