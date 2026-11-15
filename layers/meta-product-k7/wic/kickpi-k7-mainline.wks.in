@@ -1,4 +1,0 @@
-# Mainline combined loader starts at LBA64; leave 16 MiB before rootfs.
-bootloader --ptable gpt
-part --source rawcopy --sourceparams="file=${UBOOT_BINARY}" --offset ${K7_LOADER_OFFSET_KIB}K --no-table
-part / --source rootfs --fstype ${K7_ROOT_FSTYPE} --label rootfs --uuid ${K7_ROOT_PARTUUID} --align ${K7_ROOT_ALIGNMENT_KIB}

@@ -1,9 +1,0 @@
-{
-  "root_partuuid": "614e0000-0000-4b53-8000-1d28000054a9",
-  "root_start_lba": 32768,
-  "root_end_lba": 447719,
-  "loader_matches": true,
-  "gpt_crc_ok": true,
-  "root_login_password_state": "locked",
-  "boot_files_match": true
-}

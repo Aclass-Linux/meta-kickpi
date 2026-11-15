@@ -1,0 +1,8 @@
+rootdev=PARTUUID=@ROOT_PARTUUID@
+rootfstype=@ROOT_FSTYPE@
+fdtfile=@KERNEL_DTB@
+verbosity=4
+console=none
+bootlogo=false
+docker_optimizations=off
+extraargs=earlycon console=@CONSOLE_DEVICE@,@CONSOLE_BAUD@ rw roottimeout=30

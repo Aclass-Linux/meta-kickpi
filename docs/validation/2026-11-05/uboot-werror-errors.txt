@@ -1,2 +1,0 @@
-/home/ryan/Yocto/workspace-k7/build-k7/tmp/work/kickpi_k7-oe-linux/u-boot-rockchip/2017.09/sources/u-boot-rockchip-2017.09/drivers/power/charge_animation.c:791:25: error: 'soc' may be used uninitialized [-Werror=maybe-uninitialized]
-/home/ryan/Yocto/workspace-k7/build-k7/tmp/work/kickpi_k7-oe-linux/u-boot-rockchip/2017.09/sources/u-boot-rockchip-2017.09/drivers/power/charge_animation.c:791:25: error: 'current' may be used uninitialized [-Werror=maybe-uninitialized]

@@ -1,0 +1,34 @@
+{
+  "reference": "/home/ryan/Yocto/armbian-k7",
+  "reference_commit": "55ecd8e5fba9b45a1156db821d445eea0a112dbf",
+  "files": [
+    {
+      "reference_path": "patch/u-boot/legacy/u-boot-radxa-rk35xx/dt/rk3576-kickpi-k7.dts",
+      "layer_path": "recipes-bsp/u-boot/files/official/rk3576-kickpi-k7.dts",
+      "sha256": "07c37226e6009bd80eef16a4925a343477f82577b88b823926a6efa3f4806d02"
+    },
+    {
+      "reference_path": "patch/u-boot/legacy/u-boot-radxa-rk35xx/defconfig/kickpi-k7-rk3576_defconfig",
+      "layer_path": "recipes-bsp/u-boot/files/official/kickpi-k7-rk3576_defconfig",
+      "sha256": "e056b7432cf7857e6658fa502f13fdfb31597a14c7d4c88ccb0752a030a11c8a"
+    },
+    {
+      "reference_path": "patch/u-boot/legacy/u-boot-radxa-rk35xx/rk3566-Add-rk3566-to-soc-name.patch",
+      "layer_path": "recipes-bsp/u-boot/files/official/rk3566-Add-rk3566-to-soc-name.patch",
+      "sha256": "2fca0e4e05199bb186b9f9207b274a7df36428965da572ceedf63f86be13f5e5",
+      "reference_sha256": "401967909576e4ee36a814116b2dac4fb34a4bb1921a14770b8b4ab0bb31affa",
+      "metadata_change": "Added Yocto-required Upstream-Status",
+      "context_change": "Refreshed context for pinned Radxa 39cd993e5d6296635438e84f4576b3a9bf76f86e: include existing rk3576 entry; original rk3566 addition unchanged; verified patch --fuzz=0 without offset"
+    },
+    {
+      "reference_path": "packages/bsp/kickpi/rkbin-tools/rk35/rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin",
+      "layer_path": "recipes-bsp/u-boot/files/official/rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin",
+      "sha256": "e071cc6e0b7897e3cb88cc4b3d7d714625ae89d8859d72342d1124bcd56a662a"
+    },
+    {
+      "reference_path": "config/bootscripts/boot-rk3576.cmd",
+      "layer_path": "layers/meta-product-k7/recipes-core/boot-config/files/boot.cmd",
+      "sha256": "4a9182264c1b1538fc1d5b5e700024494d5519830b40e535800be2bc588f61b6"
+    }
+  ]
+}

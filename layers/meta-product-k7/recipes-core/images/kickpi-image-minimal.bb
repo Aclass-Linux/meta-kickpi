@@ -1,11 +1,11 @@
-SUMMARY = "KICKPI K7 mainline U-Boot serial/MMC bring-up image"
+SUMMARY = "KICKPI K7 Yocto image with the official Armbian boot chain"
 LICENSE = "MIT"
 require recipes-core/images/core-image-minimal.bb
 require conf/include/k7-boot-layout.inc
 COMPATIBLE_MACHINE = "^kickpi-k7$"
 IMAGE_INSTALL:append = " kernel-modules k7-boot-files"
 IMAGE_FSTYPES = "ext4 wic"
-WKS_FILE = "kickpi-k7-mainline.wks.in"
+WKS_FILE = "kickpi-k7-official.wks.in"
 WKS_FILE_DEPENDS = "${WKS_FILE_DEPENDS_DEFAULT}"
 WKS_SEARCH_PATH:append = ":${K7_PRODUCT_LAYERDIR}/wic"
 # This image deliberately does not inherit rockchip-image: its Android-style

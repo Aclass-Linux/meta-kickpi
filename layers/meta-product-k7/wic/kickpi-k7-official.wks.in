@@ -1,0 +1,5 @@
+# Official Armbian write_uboot_platform: IDB at LBA64, FIT at LBA16384.
+bootloader --ptable gpt
+part --source rawcopy --sourceparams="file=idbloader.img" --offset ${K7_LOADER_OFFSET_KIB}K --no-table
+part --source rawcopy --sourceparams="file=u-boot.itb" --offset ${K7_FIT_OFFSET_KIB}K --no-table
+part / --source rootfs --fstype ${K7_ROOT_FSTYPE} --label rootfs --uuid ${K7_ROOT_PARTUUID} --align ${K7_ROOT_ALIGNMENT_KIB}
