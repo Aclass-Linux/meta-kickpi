@@ -1,0 +1,30 @@
+{
+  "input": "rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.09.bin",
+  "input_sha256": "79bdf7eb259274eec83ea2f6330214b0c0035255bc5563746871f6f8ce7cf089",
+  "tool_sha256": "1edfd0cbfed0f7650523d03881822015ba1301bb412629d54b2fca892eea86a7",
+  "params_sha256": "b87c74e9b6393ae6d8bf32096d3fbb8367c98a69e1c1fbad645d237dec6b01b1",
+  "output": "rk3576-ddr-v1.09-k7-1560.bin",
+  "output_sha256": "3046ad481b2e1d52097b9b03b6a5d4af16a15628cc7c05f1c07db9e08ef692fe",
+  "changes": {
+    "lp4_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4_freq": {
+      "before": "2112",
+      "after": "1560"
+    },
+    "lp4x_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4x_freq": {
+      "before": "2112",
+      "after": "1560"
+    }
+  },
+  "reference_sha256": "e071cc6e0b7897e3cb88cc4b3d7d714625ae89d8859d72342d1124bcd56a662a",
+  "common_reference_fields_matched": 567,
+  "hardware_validation": "User reported boot failure; full log not supplied for this iteration",
+  "source_url": "https://github.com/rockchip-linux/rkbin/blob/08d92ffe436e34eacfcfa6b36307e48ece54c431/bin/rk35/rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.09.bin"
+}

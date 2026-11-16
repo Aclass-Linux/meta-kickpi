@@ -1,5 +1,7 @@
 # K7 BSP 与产品层
 
+> 本文记录厂商可启动基线。当前迁移分支的 provider、打包和启动配置见 [当前 RK BSP 方案](k7-rockchip-boot.md)。
+
 本仓库同时提供两个独立 Yocto layer。Git 仓库负责版本管理，layer 负责构建职责；
 两者不要求一一对应。当前保留 BSP 的已有路径，产品层放在 layers/meta-product-k7，
 避免为首次分层新增远端仓库和迁移 BSP 的所有文件。
@@ -11,8 +13,8 @@
 | 仓库根 conf/machine | K7 硬件、CPU、串口、provider | 板型或硬件支持变化 |
 | 仓库根 recipes-bsp / recipes-kernel | U-Boot、固件输入、Linux 配置和 DT | BSP 适配或升级 |
 | layers/meta-product-k7/recipes-core/images | 产品镜像的软件选择、格式和 SDK 构建入口 | 产品内容变化 |
-| layers/meta-product-k7/recipes-core/boot-config | k7-boot-files 包，安装 DTB、boot.scr、uInitrd 和 armbianEnv，依赖 kernel-image | 启动配置变化 |
-| layers/meta-product-k7/conf/include | GPT 与 armbianEnv 共用的根分区布局 | 分区方案变化 |
+| layers/meta-product-k7/recipes-core/boot-config | k7-boot-files 包，安装 DTB、initramfs 和 extlinux.conf，依赖 kernel-image | 启动配置变化 |
+| layers/meta-product-k7/conf/include | GPT 与 extlinux 共用的根分区布局 | 分区方案变化 |
 | layers/meta-product-k7/wic | WIC 布局 | 存储交付方式变化 |
 | layers/meta-product-k7/conf/templates | 开发构建模板 | 团队标准构建配置变化 |
 

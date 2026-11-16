@@ -1,12 +1,14 @@
 # K7 设备树维护
 
-当前方案和验收状态见 [可启动方案](k7-official-boot.md)。
+> 本文记录厂商可启动基线。当前迁移分支的 provider、打包和启动配置见 [当前 RK BSP 方案](k7-rockchip-boot.md)。
+
+当前方案和验收状态见 [RK BSP 构建方案](k7-rockchip-boot.md)。
 
 ## 当前输入
 
-- U-Boot：`recipes-bsp/u-boot/files/official/rk3576-kickpi-k7.dts`，原样官方 K7 文件，继承厂商 SoC DTSI。
-- Linux：`recipes-kernel/linux/files/yocto-k7/rk3576-kickpi-k7.dts`，继承 linux-yocto 的 rk3576.dtsi。bbappend 将 DTS 安装到内核源树并加入 DTB 构建列表。
-- 产品：k7-boot-files 将 Linux DTB 安装到 `/boot/dtb/rockchip/rk3576-kickpi-k7.dtb`，由 armbianEnv 的 fdtfile 指定。
+- U-Boot：`recipes-bsp/u-boot/files/rockchip/rk3576-kickpi-k7.dts`，K7 板级适配文件，继承厂商 SoC DTSI。
+- Linux：`recipes-kernel/linux/files/rockchip-k7/rk3576-kickpi-k7.dts`，继承 RK develop-6.12 的 rk3576.dtsi。内核配方 将 DTS 安装到内核源树并加入 DTB 构建列表。
+- 产品：k7-boot-files 将 Linux DTB 安装到 `/boot/dtb/rockchip/rk3576-kickpi-k7.dtb`，由 extlinux 的 FDT 项指定。
 
 同名不表示二者可互换。厂商 6.1 的 DTS 不能直接覆盖当前 Linux DTS：节点、绑定和驱动支持需要逐项核对。
 

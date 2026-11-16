@@ -1,0 +1,18 @@
+start tag=0x12345678
+atf_log_en=1
+lp4_ca_odt_ohm=120
+lp4_ca_vref_when_odten=200
+lp4_f2_freq_mhz=1560
+lp4_freq=1560
+lp4x_ca_odt_ohm=120
+lp4x_f2_freq_mhz=1560
+lp4x_freq=1560
+optee_log_en=1
+phy_lp4_ca_drv_when_odten_ohm=30
+phy_lp4_ca_drv_when_odtoff_ohm=30
+phy_lp4x_ca_drv_when_odten_ohm=30
+phy_lp4x_ca_drv_when_odtoff_ohm=30
+spl_log_en=1
+tpl_log_en=1
+uboot_log_en=1
+end

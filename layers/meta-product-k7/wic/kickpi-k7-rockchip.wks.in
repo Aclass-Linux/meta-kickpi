@@ -1,0 +1,6 @@
+# Rockchip boot_merger IDB at LBA64, Rockchip U-Boot FIT at LBA16384.
+# Dedicated names prevent consuming an older vendor deployment.
+bootloader --ptable gpt
+part --source rawcopy --sourceparams="file=k7-rockchip-idbloader.img" --offset ${K7_LOADER_OFFSET_KIB}K --no-table
+part --source rawcopy --sourceparams="file=k7-rockchip-u-boot.itb" --offset ${K7_FIT_OFFSET_KIB}K --no-table
+part / --source rootfs --fstype ${K7_ROOT_FSTYPE} --label rootfs --uuid ${K7_ROOT_PARTUUID} --align ${K7_ROOT_ALIGNMENT_KIB}

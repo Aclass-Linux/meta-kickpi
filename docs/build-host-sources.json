@@ -1,0 +1,17 @@
+[
+  {
+    "name": "openembedded-core",
+    "url": "https://github.com/openembedded/openembedded-core.git",
+    "revision": "0f03c732a0a2d0506b41b1abe60b3f368b2300dc"
+  },
+  {
+    "name": "bitbake",
+    "url": "https://github.com/openembedded/bitbake.git",
+    "revision": "51fd94a67fa17650a9ff623492005972bbc7d26f"
+  },
+  {
+    "name": "meta-openembedded",
+    "url": "https://github.com/openembedded/meta-openembedded.git",
+    "revision": "c734c2cb9713dbd6d50697a9f6c25ebdf3ae589e"
+  }
+]

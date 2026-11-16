@@ -1,0 +1,24 @@
+{
+  "baseline_branch": "baseline/k7-vendor-linux-boot",
+  "baseline_commit": "0a1f89518221ff125224c5f0910f09455ed31871",
+  "layers_at_migration_start": {
+    "openembedded-core": "0f03c732a0a2d0506b41b1abe60b3f368b2300dc",
+    "bitbake": "51fd94a67fa17650a9ff623492005972bbc7d26f",
+    "meta-openembedded": "c734c2cb9713dbd6d50697a9f6c25ebdf3ae589e",
+    "meta-yocto": "7c25b11156553145fa6b241a2d4f65d94438f804",
+    "meta-kickpi": "0a1f89518221ff125224c5f0910f09455ed31871"
+  },
+  "baseline_wic_sha256": "eff2f62972bcd54a4b8594bb4557cc12c38d74491b977bc5c9590b43856d6a04",
+  "upstream_inputs": {
+    "u-boot": "5508406582f6f7120dce0c4b3059819a41788db2",
+    "trusted-firmware-a": "da738d5eae93af342fdc4995dd3c05acb4c9d757",
+    "rkbin": "3e288fe814e059dd06833495f845cab04ac20a5c"
+  },
+  "rkbin_files": {
+    "tools/boot_merger": "f8e1a2d01bc475e9571ab0aec00e4cca3d85bbd4587f3873970560443a237d0c",
+    "RKBOOT/RK3576MINIALL.ini": "043e91e555f1cd351714799918cec314e91f6b0980b066473acece60b8d836bc",
+    "bin/rk35/rk3576_boost_v1.03.bin": "ca525f15e54fabd1c84ce40450a01ecd666db408e1cbf1902d62415d91826915",
+    "bin/rk35/rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.13.bin": "f697151bdd09d31bf7a1e49d63796a6a200e81bf8f9a766c2e95c840e88fc0ce",
+    "bin/rk35/rk3576_usbplug_v1.04.bin": "77238d47f10e84844d95707024b8171fc9f198e19ad6500f5e8a5810ca6c680b"
+  }
+}

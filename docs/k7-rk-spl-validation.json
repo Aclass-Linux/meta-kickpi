@@ -1,0 +1,21 @@
+{
+  "source_repository": "https://github.com/rockchip-linux/u-boot.git",
+  "source_branch": "next-dev",
+  "source_commit": "1c535d65b8509f388d09e49fb6961f49fda35a1d",
+  "source_commit_date": "2026-07-28",
+  "official_cache_fetch_without_network": "passed",
+  "spl_version": "2017.09 vendor next-dev",
+  "spl_size": 337400,
+  "spl_sha256": "a4de34fa77237c94689d2b43a6974259972ed78be96385bdb3086cb39e60c262",
+  "idb_size": 425984,
+  "idb_sha256": "97f4ec7a8446d5d929ab98f42764b83bf9d1b6a5b0674eb520577d52af2fde93",
+  "ddr_version": "1.09, K7 1560 MHz parameters",
+  "ddr_offset_in_idb": 8192,
+  "spl_offset_in_idb": 86016,
+  "reset_does_not_write_cntfrq_el0": true,
+  "contains_official_1GHz_timer_fix": true,
+  "fit_sector": "0x4000",
+  "cross_compile": "passed with Yocto GCC 15.3 and sysroot",
+  "full_wic_build": "not run",
+  "hardware_validation": "pending"
+}

@@ -1,0 +1,8 @@
+DEFAULT yocto
+TIMEOUT 30
+LABEL yocto
+    MENU LABEL K7 Yocto Linux
+    LINUX /boot/Image
+    INITRD /boot/initramfs.cpio.gz
+    FDT /boot/dtb/@KERNEL_DTB@
+    APPEND root=PARTUUID=@ROOT_PARTUUID@ rootfstype=@ROOT_FSTYPE@ rootwait rw roottimeout=30 earlycon console=@CONSOLE_DEVICE@,@CONSOLE_BAUD@

@@ -1,0 +1,31 @@
+{
+  "input": "rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin",
+  "input_sha256": "7403cf1663d4b0c9d7c692014e0852e60f0d3977209ec75fa755c293f54e2d50",
+  "tool_sha256": "1edfd0cbfed0f7650523d03881822015ba1301bb412629d54b2fca892eea86a7",
+  "params_sha256": "b87c74e9b6393ae6d8bf32096d3fbb8367c98a69e1c1fbad645d237dec6b01b1",
+  "output": "rk3576-ddr-v1.08-k7-1560.bin",
+  "output_sha256": "e071cc6e0b7897e3cb88cc4b3d7d714625ae89d8859d72342d1124bcd56a662a",
+  "changes": {
+    "lp4_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4_freq": {
+      "before": "2112",
+      "after": "1560"
+    },
+    "lp4x_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4x_freq": {
+      "before": "2112",
+      "after": "1560"
+    }
+  },
+  "reference_sha256": "e071cc6e0b7897e3cb88cc4b3d7d714625ae89d8859d72342d1124bcd56a662a",
+  "common_reference_fields_matched": 567,
+  "hardware_validation": "pending",
+  "source_url": "https://github.com/rockchip-linux/rkbin/blob/57296ad286255d98a3d409036a4b8560b6013b7d/bin/rk35/rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin",
+  "byte_identical_to_known_good_reference": true
+}

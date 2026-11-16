@@ -1,4 +1,4 @@
-# Product boot contract shared by WIC and armbianEnv.txt.
+# Product boot contract shared by WIC and extlinux.conf.
 K7_ROOT_PARTUUID = "614e0000-0000-4b53-8000-1d28000054a9"
 K7_ROOT_FSTYPE = "ext4"
 K7_LOADER_OFFSET_KIB = "32"

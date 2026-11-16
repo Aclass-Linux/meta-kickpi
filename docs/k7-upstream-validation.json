@@ -1,0 +1,37 @@
+{
+  "status": "partial-offline-validation",
+  "full_bitbake_build": false,
+  "tfa_built": false,
+  "wic_generated": false,
+  "hardware_boot_test": false,
+  "checks": {
+    "bitbake_worker_recipe_parse": "pass (5 recipes)",
+    "expanded_shell_syntax": "pass",
+    "uboot_spl_dtb_compile": "pass (U-Boot v2026.10, existing Yocto GCC 15.3 sysroot)",
+    "rockchip_boot_merger": "pass (official tool v1.38, official Boost v1.03 / DDR v1.13, newly built SPL)",
+    "git_diff_check": "pass"
+  },
+  "artifacts": {
+    "u-boot": {
+      "bytes": 6983392,
+      "sha256": "f2c6788628ef0626e66baed6cc72b9ac5572dfe9738bf756f95043cae9c3b67f"
+    },
+    "u-boot.dtb": {
+      "bytes": 174160,
+      "sha256": "cf8f57efeeea431b1343f7966a17a20eab98c253eb36ff33c1bbd4582ce13256"
+    },
+    "spl/u-boot-spl.bin": {
+      "bytes": 110590,
+      "sha256": "da3262dbe70d25fc1bdc88ba18470d6518ab2e42512f79c496b5121105e2bfd5"
+    },
+    "k7-upstream-idbloader.img": {
+      "bytes": 200704,
+      "sha256": "19ecfa9d0ce8b59ce120507afa918df3001e7d9baa0e7a0796604dc0a7eb9463"
+    }
+  },
+  "limitations": [
+    "BitBake server socket bind denied by sandbox",
+    "GitHub DNS unavailable; TF-A source not present locally",
+    "K7 runtime support and DDR v1.13 stability unverified"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "input": "rk3576_ddr_lp4_2112MHz_lp5_2736MHz_v1.13.bin",
+  "input_sha256": "f697151bdd09d31bf7a1e49d63796a6a200e81bf8f9a766c2e95c840e88fc0ce",
+  "tool_sha256": "1edfd0cbfed0f7650523d03881822015ba1301bb412629d54b2fca892eea86a7",
+  "params_sha256": "c04bfb3dd67a53866d7dfbc46f811a58f03b11d59e46830681e9c8adcc8819b1",
+  "output": "rk3576-ddr-v1.13-k7-matched.bin",
+  "output_sha256": "b3364dc0c4db22dbc14df017c3d731ba3f2619a4164e43437781994fb49dac92",
+  "changes": {
+    "atf_log_en": {
+      "before": "0",
+      "after": "1"
+    },
+    "lp4_ca_odt_ohm": {
+      "before": "80",
+      "after": "120"
+    },
+    "lp4_ca_vref_when_odten": {
+      "before": "184",
+      "after": "200"
+    },
+    "lp4_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4_freq": {
+      "before": "2112",
+      "after": "1560"
+    },
+    "lp4x_ca_odt_ohm": {
+      "before": "80",
+      "after": "120"
+    },
+    "lp4x_f2_freq_mhz": {
+      "before": "1068",
+      "after": "1560"
+    },
+    "lp4x_freq": {
+      "before": "2112",
+      "after": "1560"
+    },
+    "optee_log_en": {
+      "before": "0",
+      "after": "1"
+    },
+    "phy_lp4_ca_drv_when_odten_ohm": {
+      "before": "40",
+      "after": "30"
+    },
+    "phy_lp4_ca_drv_when_odtoff_ohm": {
+      "before": "40",
+      "after": "30"
+    },
+    "phy_lp4x_ca_drv_when_odten_ohm": {
+      "before": "40",
+      "after": "30"
+    },
+    "phy_lp4x_ca_drv_when_odtoff_ohm": {
+      "before": "40",
+      "after": "30"
+    },
+    "spl_log_en": {
+      "before": "0",
+      "after": "1"
+    },
+    "tpl_log_en": {
+      "before": "0",
+      "after": "1"
+    },
+    "uboot_log_en": {
+      "before": "0",
+      "after": "1"
+    }
+  },
+  "reference_sha256": "e071cc6e0b7897e3cb88cc4b3d7d714625ae89d8859d72342d1124bcd56a662a",
+  "common_reference_fields_matched": 567,
+  "hardware_validation": "pending"
+}
