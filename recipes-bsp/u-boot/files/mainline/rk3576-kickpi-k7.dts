@@ -1,0 +1,86 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * K7 上游 U-Boot 最小适配：串口、SD/eMMC 和 USB。
+ * 引脚与存储拓扑参考厂商 K7 设备树；电源切换及高速模式仍需板上验证。
+ *
+ * 设计方法与信息来源（板级 dts = 原理图事实 + SoC dtsi + bindings 约束）：
+ *   ① 原理图提取硬件事实：外设清单、存储拓扑（eMMC 在 sdhci、SD 卡在
+ *      sdmmc）、引脚复用组、CD/WP/PWREN 是否走线；
+ *   ② SoC 级模板：同目录 rk3576.dtsi 已定义全部控制器，板级文件只做
+ *      "选（status）、填（板级参数）、接（pinctrl）"三件事；
+ *   ③ 参考板写法：内核 arch/arm64/boot/dts/rockchip/rk3576-evb*.dts，
+ *      本文件结构与之一致，差异处即 K7 原理图与 EVB 的差异；
+ *   ④ 属性合法性：内核 Documentation/devicetree/bindings/（YAML），
+ *      如 disable-wp/cap-*-highspeed 查 mmc/rockchip-dw-mshc.yaml；
+ *   ⑤ 引脚复用：同目录 rk3576-pinctrl.dtsi + 芯片 TRM 复用表（uart0m0_*）；
+ *   ⑥ 存储参数依据：JEDEC eMMC / SD 简化物理层规范（bus-width、频率档位）。
+ * 验证：构建期 make dtbs_check；真机对应 mmc dev（存储）、串口输出、
+ * rockusb 枚举（USB）。U-Boot 视角只写启动链外设，内核外设不在此文件。
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+/* 使用上游同步的 SoC 描述；本板配置关闭 OF_UPSTREAM，显式指定路径。 */
+#include "../../../dts/upstream/src/arm64/rockchip/rk3576.dtsi"
+
+/ {
+	model = "KICKPI K7";
+	compatible = "kickpi,k7", "rockchip,rk3576";
+
+	aliases {
+		mmc0 = &sdhci;
+		mmc1 = &sdmmc;
+	};
+
+	chosen {
+		stdout-path = "serial0:1500000n8";
+	};
+};
+
+&sdhci {
+	/* eMMC 协议参数出处：JEDEC JESD84——8 位数据线（DAT0-7），
+	 * High Speed 档 = 52 MHz（26 MB/s）。
+	 * no-sd/no-sdio/non-removable 属主机侧策略（bindings/mmc/mmc-host.yaml）：
+	 * 器件焊死在板上，不接受插卡。 */
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	max-frequency = <52000000>;
+	no-sd;
+	no-sdio;
+	non-removable;
+	status = "okay";
+};
+
+&sdmmc {
+	/* K7 只配置 CLK/CMD/CD/DATA，不启用通用板的 PWREN 引脚。 */
+	pinctrl-0 = <&sdmmc0_clk &sdmmc0_cmd &sdmmc0_det &sdmmc0_bus4>;
+	max-frequency = <50000000>;
+	bus-width = <4>;
+	cap-sd-highspeed;
+	disable-wp;
+	no-mmc;
+	no-sdio;
+	status = "okay";
+};
+
+&u2phy0 {
+	status = "okay";
+};
+
+&u2phy0_otg {
+	status = "okay";
+};
+
+&uart0 {
+	pinctrl-0 = <&uart0m0_xfer>;
+	status = "okay";
+};
+
+&usb_drd0_dwc3 {
+	dr_mode = "peripheral";
+	maximum-speed = "high-speed";
+	phys = <&u2phy0_otg>;
+	phy-names = "usb2-phy";
+	status = "okay";
+};

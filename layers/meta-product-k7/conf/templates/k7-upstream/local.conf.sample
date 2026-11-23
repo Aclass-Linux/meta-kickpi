@@ -1,9 +1,191 @@
-# Development bring-up profile, not a production authentication policy.
+# 本地构建配置模板：参考当前 OpenEmbedded-Core 官方 local.conf.sample。
+# 初始化时复制到构建目录 conf/local.conf；以后修改本模板不会更新已有配置。
+# 以 # 开头的行不生效；以下保留 K7 默认值，QEMU 及其他可选项按需取消注释。
+# 更高级的示例见 meta/conf/templates/default/local.conf.sample.extended；
+# 代理等站点设置见同目录 site.conf.sample。这里不是全部 BitBake 变量的清单。
+
+# === 1. 机器目标：K7 与 QEMU 两种方案 ===
+# K7：conf/machine/kickpi-k7.conf，使用真实 RK3576 硬件。
+# 构建：bitbake kickpi-image-minimal
 MACHINE = "kickpi-k7"
-SDKMACHINE = "x86_64"
+# a. 厂商方案（默认）：厂商 U-Boot v5、源码 SPL、厂商工具打包。
+# b. 上游方案：U-Boot v2026.01、独立 rkbin 固件配方、上游 binman 打包。
+# 两种方案都使用厂商 DDR/BL31 二进制；此开关不会切换 Linux 内核。
+# 建议分别使用 build-k7 和 build-k7-mainline 构建目录；上游方案待硬件验证。
+#K7_BOOT_STACK = "rockchip"
+#K7_BOOT_STACK = "mainline"
+# QEMU：注释上面的 MACHINE，再启用下面这一行；建议独立 build-qemu 目录。
+# 构建：bitbake core-image-minimal
+# 启动：runqemu qemuarm64 nographic
+# kickpi-image-minimal 限制为 K7，不能直接用于 QEMU。
+#MACHINE = "qemuarm64"
+# 官方还提供以下模拟机器，配置在启用层的 conf/machine/ 下查找：
+#MACHINE = "qemuarm"
+#MACHINE = "qemuriscv64"
+#MACHINE = "qemux86"
+#MACHINE = "qemux86-64"
+# 官方默认模板使用 MACHINE ??= "qemux86-64"；本模板明确选择 K7。
+
+# === 2. 下载、共享缓存与构建输出 ===
+# TOPDIR 是当前构建目录。下载和 sstate 缓存可以在多个构建目录之间共享。
+# 清理 tmp 后保留缓存，可减少重复下载和编译；仅复用签名匹配的缓存。
+#DL_DIR ?= "${TOPDIR}/downloads"
+#SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+# TMPDIR 包含解包、编译和部署输出，需要预留充足磁盘空间。
+#TMPDIR = "${TOPDIR}/tmp"
+
+# === 3. 软件包格式 ===
+# 支持 package_ipk（opkg）、package_deb、package_rpm。
+# 可填写多个格式，但第一个用于生成根文件系统；不等于启用目标机包管理器。
 PACKAGE_CLASSES = "package_ipk"
+#PACKAGE_CLASSES = "package_rpm package_deb package_ipk"
+
+# === 4. SDK 运行主机架构 ===
+# SDKMACHINE 决定生成的 SDK 在什么主机上运行，不是目标板架构。
+# 官方列出的选项有 i686、x86_64、aarch64。
+SDKMACHINE = "x86_64"
+
+# === 5. 镜像附加功能 ===
+# 当前仅供开发：root 空密码，允许空密码认证；量产时应重新配置账户策略。
 EXTRA_IMAGE_FEATURES = "empty-root-password allow-empty-password"
+# 官方示例还可使用以下功能（会增加镜像体积和构建时间）：
+# dbg-pkgs：调试符号；src-pkgs：源码；dev-pkgs：开发文件。
+# ptest-pkgs：已启用 ptest 的软件包测试；tools-sdk：gcc、make 等开发工具。
+# tools-debug：gdb、strace；eclipse-debug：Eclipse 远程调试。
+# tools-profile：性能分析工具；tools-testapps：音频等测试工具。
+# allow-root-login：允许 root 登录；实际登录方式还受服务配置限制。
+#EXTRA_IMAGE_FEATURES:append = " tools-debug"
+# 其他可选功能见 meta/classes-recipe/{image,core-image}.bbclass。
+
+# === 6. 构建统计 ===
+# USER_CLASSES 指定额外加载的 class，多个名称用空格分隔；class 是可复用的构建功能。
+# ?= 表示仅在变量尚未定义时赋默认值；buildstats 对应
+# meta/classes-global/buildstats.bbclass，用于分析构建耗时和主机资源使用情况。
+# 按配方和任务（如 GCC 的 do_compile）记录开始/结束时间、耗时、CPU 时间、
+# I/O、内存峰值等进程资源信息，以及任务成功或失败状态。
+# 默认输出到 ${TMPDIR}/buildstats/，按构建时间、配方和任务组织记录；
+# 当前 K7 构建通常对应 workspace/build-k7/tmp/buildstats/。
+# OpenEmbedded-Core 的 scripts/buildstats-summary 可汇总耗时，
+# scripts/buildstats-diff 可比较两次统计；具体参数使用 --help 查看。
+# 统计对象是构建主机上的任务，不是开发板启动时间或目标程序的运行性能。
+# 不向镜像安装监控服务；主要增加少量采集开销和统计文件，学习阶段建议保留。
+# 常见可选 class（按需启用，部分需要额外配置）：
+# buildstats-summary：构建结束时汇总 sstate 复用比例，需搭配 buildstats。
+# buildhistory：记录软件包、依赖和镜像大小等变化，便于比较构建结果。
+# rm_work：构建完成后清理中间工作文件以节省空间，会影响源码查看和调试。
+# archiver：按配置归档源码和补丁，便于源码交付。
+# create-spdx：生成 SPDX 软件物料清单（SBOM），可能已由其他配置启用。
+# ccache：缓存编译器结果，加速部分重复编译，与 sstate 缓存不同。
+# 多个名称用空格分隔，例如 USER_CLASSES = "buildstats buildstats-summary"。
+# 此变量没有固定枚举列表，但并非所有 .bbclass 都适合全局加载。
 USER_CLASSES ?= "buildstats"
+
+# === 7. 镜像及 SDK 运行测试 ===
+# 推荐流程：先手动验证测试环境，再启用构建后自动测试。
+# a. 启用测试类，为镜像增加 testimage 和 testsdk 任务。
+# testimage 检查目标系统运行情况，例如网络、SSH、基础命令和服务。
+# testsdk 检查生成的 SDK，例如加载环境脚本、运行交叉编译器并编译示例。
+#IMAGE_CLASSES += "testimage testsdk"
+
+# b. 选择镜像测试用例，并准备网络、目标机 SSH 服务及登录等条件。
+# 加载测试类不会自动补齐所有测试条件。
+#TEST_SUITES = "ping ssh"
+# 手动运行：先执行 bitbake core-image-minimal，
+# 再执行 bitbake core-image-minimal -c testimage。
+# 对 QEMU，框架会启动模拟器、执行用例并收集结果，无需提前手动运行 runqemu。
+
+# c. 手动测试跑通后，可为 QEMU 启用镜像构建后的自动测试。
+#TESTIMAGE_AUTO:qemuall = "1"
+# 此设置仅在匹配 qemuall 时生效，不负责 K7 实际板卡的烧录、上电和硬件测试。
+# 真实板卡需另行配置测试目标、网络及所需的电源等控制方式。
+
+# d. SDK 测试独立执行：先生成 SDK，再运行 testsdk 任务。
+# bitbake core-image-minimal -c populate_sdk
+# bitbake core-image-minimal -c testsdk
+
+# e. 自定义用例与流程集成。
+# 官方用例位于 meta/lib/oeqa/runtime/cases/ 和 meta/lib/oeqa/sdk/cases/。
+# 产品运行用例可放在产品层 lib/oeqa/runtime/cases/，配置测试搜索路径，
+# 再通过 TEST_SUITES 选择；例如验证网关服务、HTTP 接口或 MQTT 消息。
+# 需要真实 485 外设的测试应安排在硬件环境中。
+# CI 可执行同样的构建和测试命令，在测试失败时阻止交付。
+# 细节见 meta/classes-recipe/testimage.bbclass、testsdk.bbclass。
+
+# === 8. 交互终端与补丁处理 ===
+# 以下两项作用于构建主机上的开发与构建过程，不配置开发板串口或登录终端。
+# OE_TERMINAL：指定交互任务使用哪个主机终端程序，不影响普通任务的日志输出。
+# 例如 bitbake virtual/kernel -c menuconfig 打开内核配置菜单；
+# bitbake <配方名> -c devshell 进入带有该配方构建环境的 shell，便于手动排查。
+# auto 自动尝试可用终端，也是当前 terminal.bbclass 的默认值；保持注释即可。
+# 可选示例：xterm、gnome、xfce、screen、tmux，需主机安装并满足运行条件。
+# none 禁止启动此类交互终端；需要终端的任务会失败，普通非交互任务仍可运行。
+# SSH 或无桌面环境可考虑 tmux/screen，auto 并不保证主机一定有可用终端。
+#OE_TERMINAL = "auto"
+#
+# PATCHRESOLVE：指定 do_patch 应用补丁失败后的处理方式，支持 noop 和 user。
+# 通常任务顺序为 do_fetch → do_unpack → do_patch → do_configure → do_compile。
+# 配方 SRC_URI 中列出的补丁会在配置、编译之前应用到工作目录里的源码。
+# noop：照常应用补丁；若失败，do_patch 报错，不打开交互式修复终端。
+# 注意 noop 不是跳过补丁，也不是忽略错误；依赖该任务的后续构建无法继续。
+# user：补丁失败时尝试通过 OE_TERMINAL 打开手动修复终端。
+# 当前实现会提示修复拒绝的修改块、执行 quilt refresh，再按 Ctrl+D 退出。
+# 日常构建及 CI 通常使用 noop，避免等待人工输入；user 适合主动交互排查。
+# 例如上游源码更新导致补丁上下文不匹配，应查看失败任务的 temp/log.do_patch，
+# 修复并保存层中维护的补丁后再构建，不要只修改 tmp 下会被清理的源码。
+# 细节见 meta/classes/terminal.bbclass、meta/classes-global/patch.bbclass。
 PATCHRESOLVE = "noop"
+
+# === 9. 磁盘空间监控（官方默认阈值） ===
+# STOPTASKS 停止调度新任务；HALT 中止构建；同时检查剩余空间和 inode。
+BB_DISKMON_DIRS ??= "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    HALT,${TMPDIR},100M,1K \
+    HALT,${DL_DIR},100M,1K \
+    HALT,${SSTATE_DIR},100M,1K \
+    HALT,/tmp,10M,1K"
+
+# === 10. 共享状态镜像 ===
+# 在本地缓存未命中时查找其他目录或服务器，PATH 由系统替换为缓存对象路径。
+#SSTATE_MIRRORS ?= "file://.* https://someserver.tld/share/sstate/PATH;downloadfilename=PATH"
+#SSTATE_MIRRORS ?= "file://.* file:///some/local/dir/sstate/PATH"
+# 官方发布版缓存 CDN；是否命中取决于版本、配置和已有缓存。
+# 启用后需要联网查询，网络较慢时查询本身也会耗时。
+#OE_FRAGMENTS += "core/yocto/sstate-mirror-cdn"
+
+# === 11. QEMU 图形前端 ===
+# 本模板采用终端学习方案：构建 core-image-minimal 后，在已初始化的构建环境中执行：
+# runqemu qemuarm64 nographic slirp
+# nographic 不打开图形窗口，在当前终端提供模拟串口输出和登录交互；
+# slirp 启用无需 root 权限的用户网络，访问虚拟机内服务需另配端口转发。
+# 这是 runqemu 启动参数，不是 local.conf 变量；本模板不会自动启动模拟器。
+# 不需要设置 OE_TERMINAL = "none"，该变量控制构建交互终端，与模拟器显示无关。
+# 以下图形配置保留为可选示例，当前均不启用；配方默认图形功能仍可能存在。
+# 后续运行 Qt 图形界面时，需在目标镜像集成 Qt 和显示环境，再选择图形启动方式。
+# 官方默认构建的 native QEMU 提供 VNC 和 SDL 图形前端。
+# 若主机已具备所需 SDL 开发环境，可声明由主机提供 libsdl2-native。
+#ASSUME_PROVIDED += "libsdl2-native"
+# 可选 GTK 窗口界面，会增加构建依赖；nographic 启动不需要图形窗口。
+#PACKAGECONFIG:append:pn-qemu-system-native = " gtk+"
+
+# === 12. 哈希等价服务 ===
+# 识别任务输出等价的情况，提高 sstate 复用率；auto 启动本地服务。
+# 共享服务器地址也可以使用 主机名:端口。
+#BB_HASHSERVE = "auto"
+#BB_SIGNATURE_HANDLER = "OEEquivHash"
+
+# === 13. BitBake 服务驻留 ===
+# 命令结束后保留服务指定秒数，可减少后续命令重新加载缓存的开销。
+#BB_SERVER_TIMEOUT = "60"
+
+# === 14. 并行度（补充自官方 extended 示例） ===
+# 默认按主机能力选择；内存不足时可降低任务数和单任务 make 并行度。
+#BB_NUMBER_THREADS = "4"
+#PARALLEL_MAKE = "-j 4"
+#do_fetch[number_threads] = "4"
+
+# === 15. 配置格式版本 ===
+# 用于检测构建配置格式的兼容性，与机器或软件版本无关。
 CONF_VERSION = "2"
-# Set DL_DIR, SSTATE_DIR and build parallelism locally as needed.

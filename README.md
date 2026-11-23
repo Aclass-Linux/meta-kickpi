@@ -3,7 +3,8 @@
 KICKPI K7（RK3576）的自有 Yocto BSP。当前采用 Rockchip BSP 优先策略：
 Linux 跟踪 rockchip-linux/kernel 的 develop-6.12，U-Boot/SPL 跟踪
 rockchip-linux/u-boot 的 v5，DDR/BL31/BL32/打包工具跟踪 rkbin/master。
-均使用 AUTOREV，固定分支、跟随最新提交；实际版本记录随产物部署。
+Linux 使用 AUTOREV；U-Boot 与 rkbin 默认固定当前调试使用的提交，SPL 关闭 A/B。
+实际版本记录随产物部署，构建无需额外指定配置文件。
 Yocto 负责根文件系统、应用和 WIC 镜像。
 
 已启动 Linux 的历史厂商基线保存在本地 `baseline/k7-vendor-linux-boot`（`0a1f895`）。

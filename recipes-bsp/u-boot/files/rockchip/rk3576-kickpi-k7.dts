@@ -4,6 +4,19 @@
  * Board overrides for the Rockchip BSP RK3576 SoC device tree.
  * K7 topology cross-checked against the vendor rk3576-kickpi-k7.dts.
  * Keep boot firmware power rails; voltage switching/HS200 require board validation.
+ *
+ * 修改本文件前，请先对读这些出处：
+ *
+ * 参考模板   同 SoC EVB：arch/arm64/boot/dts/rockchip/rk3576-evb*.dts，
+ *            板级结构与 EVB 一致，外设差异以 KICKPI 板卡 wiki/原理图为准。
+ * 属性含义   Documentation/devicetree/bindings/（YAML），例：
+ *            bus-width/max-frequency/disable-wp 见 mmc/rockchip-dw-mshc.yaml。
+ * 引脚复用   rk3576-pinctrl.dtsi + 芯片 TRM 的 IOMUX 表。
+ * 芯片手册   Rockchip 官网 TRM + opensource.rock-chips.com SDK 文档。
+ * 存储标准   JEDEC（eMMC）/ SD Association 规范，bus-width、max-frequency 的依据。
+ *
+ * U-Boot 最小适配原则：本树只保留启动链外设（串口/存储/USB），
+ * 内核才用的显示、网卡、音频等一律不写。
  */
 
 /dts-v1/;

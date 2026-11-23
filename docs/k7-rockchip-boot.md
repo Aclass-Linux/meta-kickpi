@@ -2,7 +2,7 @@
 
 ## 选型原则
 
-按用户要求，支持 RK3576 的组件优先使用 https://github.com/rockchip-linux/ 下的实现，不再以纯主线上游为目标。源码跟踪指定分支，`SRCREV = "${AUTOREV}"`，不锁定提交；每次交付记录实际构建的提交和固件哈希。
+支持 RK3576 的组件优先使用 https://github.com/rockchip-linux/ 下的实现。Linux 跟踪指定分支并使用 AUTOREV；U-Boot 与 rkbin 默认固定当前调试使用的提交，见配方中的 SRCREV。每次交付记录实际构建的提交和固件哈希。
 
 “最新”指选定 RK 分支的最新提交，不表示把 Linux 主线最新版本直接替换进 BSP。分支名属于兼容性选择；升级大版本分支仍需重新适配板级配置。
 
@@ -20,11 +20,11 @@
 
 截至本次检查，v5 基础版本为 U-Boot 2025.04；develop-6.12 的 Makefile 显示 6.12.69。rkbin 当前选中 DDR v1.13、Boost v1.03、BL31 v1.25、BL32 v1.12。这些是检查时的结果，不是配方中的固件文件名锁定。后续 master 更新时，以其配置和产物 manifest 为准。
 
-配方 PV 的 `2025.04+git`、`6.12+git` 是软件包版本标识；源码选择由分支与 AUTOREV 决定，不固定补丁版本或提交。
+配方 PV 的 `2025.04+git`、`6.12+git` 是软件包版本标识；源码选择由各配方的分支与 SRCREV 决定。
 
 ## 板级适配
 
-U-Boot 使用 v5 自带 RK3576 配置，再应用 `files/rockchip/configure-k7-v5.sh`，选择 K7 DTS、SD 原始扇区 0x4000、extlinux/bootflow 启动。K7 的 U-Boot DTS 与 Linux DTS 分别维护，继承各自源码版本的 SoC DTSI。
+U-Boot 使用 v5 自带 RK3576 配置，再应用 `files/rockchip/configure-k7-v5.sh`，选择 K7 DTS、SD 原始扇区 0x4000、extlinux/bootflow 启动，并默认关闭 SPL A/B 探测。当前只有一个 rootfs；以后引入 A/B 时再调整相关配置。K7 的 U-Boot DTS 与 Linux DTS 分别维护，继承各自源码版本的 SoC DTSI。
 
 DDR 原始文件由 MINIALL_V5.ini 决定，使用同一次 rkbin 检出的 ddrbin_tool.py 生成 K7 参数版本。继续保持 LP4/LP4X 的 1560 MHz 配置，回读验证全部 K7 v1.08 共同参数。旧 v1.08 文件仅作为板级参数校验参考，不作为本轮烧录 DDR。生成文件统一命名 `rk3576-ddr-k7-1560.bin`；原始文件名、参数变化与 SHA256 记录在 JSON 中。
 
@@ -34,7 +34,7 @@ BL31 和 BL32 都从 rkbin 同一 TRUST.ini 读取。BL32 装载偏移取自该�
 
 ## 构建流程
 
-1. BitBake 获取 u-boot/v5、rkbin/master、kernel/develop-6.12 的最新提交。
+1. BitBake 获取配方固定的 U-Boot、rkbin 提交，以及 kernel/develop-6.12 的最新提交。
 2. 读取 RK 的 MINIALL_V5.ini 和 TRUST.ini，归档输入来源与哈希，生成并回读校验 K7 DDR。
 3. 从 RK 源码编译 U-Boot、SPL、设备树。使用 RK make_fit_atf.sh 和 Makefile 的 U_BOOT_ITS 入口构建包含 U-Boot、BL31、BL32、DTB 的 FIT。
 4. 使用 RK boot_merger，以 MINIALL_V5.ini 为模板，把其中预编译 SPL 替换成本次源码编译 SPL，生成 IDB。
@@ -92,7 +92,7 @@ bitbake kickpi-image-minimal
 - rkbin 检出提交 `3e288fe814e059dd06833495f845cab04ac20a5c`，DDR 生成后 567 个共同参考参数全部匹配。
 - FIT 六个镜像的 SHA256、U-Boot/BL32/DTB 与实际输入一致性检查通过；BL31 入口为 `0x40060000`，与 FIT 选中段一致。
 - RK boot_merger 生成 IDB，通过当前 DDR/SPL 原始字节匹配及 8 MiB/16 MiB 边界检查。
-- 当前 U-Boot、内核、启动文件、镜像配方离线解析及展开后的 shell 语法检查通过。离线解析使用本地测试替代远程 revision 查询，不代表内核已下载或编译完成；正式配方仍为 AUTOREV。
+- 历史离线解析及展开后的 shell 语法检查曾通过；当时使用本地测试替代远程 revision 查询，不代表当前配置已完成重建或硬件验证。
 - 当前环境网络受限，完整 RK 内核构建、BitBake WIC 与实机验收尚未完成。已有下载日志不等于新内核构建成功。
 
 已删除本轮不再使用的上游 TF-A 配方、next-dev 专用 OP-TEE 补丁和旧 RK defconfig。当前配方只从 files/rockchip 读取本地适配输入；files/upstream 下的内容为未选中的历史实验。
@@ -128,3 +128,38 @@ GNU make 命令行变量覆盖厂商 Makefile 的普通赋值，使其头文件�
 ## 2026-11-16 完整构建结果
 
 本机 cooker 日志确认 `kickpi-image-minimal` 全部 4727 个任务成功（4675 个复用）。产物为 `kickpi-image-minimal-kickpi-k7.rootfs-20261116024023.wic`。此前各节“完整构建仍需重跑”是当时记录，本条更新其构建状态；USB/eMMC 和外设实机验收仍需单独执行。本次另将已生成的 USB Loader 加入 do_deploy，文件名为 `k7-rockchip-loader.bin`。
+
+
+## 厂商与上游 U-Boot 切换（学习方案）
+
+### a. 选择方案
+
+默认 `K7_BOOT_STACK = "rockchip"`，保留现有厂商 U-Boot v5 构建流程。
+在构建目录的 `conf/local.conf` 中设置 `K7_BOOT_STACK = "mainline"`，即可选择
+`u-boot-k7-mainline`，从固定的上游 U-Boot v2026.01 源码构建 SPL 和 U-Boot。
+本开关不切换 Linux 内核；上游方案的 K7 设备树、启动和外设尚待硬件验证。
+建议使用两个构建目录，避免混淆产物和串口日志。配置示例也位于模板中。
+
+### b. 固件与任务关系
+
+厂商方案继续由 `u-boot-k7-rockchip` 准备 DDR、BL31、OP-TEE 并打包。
+上游方案由独立的 `k7-rkbin` 配方准备 DDR 和 BL31，U-Boot 的
+`do_compile[depends]` 等待固件 `do_deploy`，再通过 `ROCKCHIP_TPL` 和 `BL31`
+参数交给上游构建系统。两套使用相同 rkbin 提交和 K7 DDR 参数；上游方案
+本轮不接入 OP-TEE。这不是整个启动链无二进制固件的方案。
+
+### c. 镜像和 USB 烧录
+
+WIC 按方案选择 `k7-rockchip-*` 或 `k7-mainline-*` 文件，保持 IDBLoader 在
+32 KiB、FIT 在 8 MiB、rootfs 在 16 MiB 的布局。USB 导出仍只有
+`usb-flash-k7/k7-rockchip-loader.bin` 和 `kickpi-k7-emmc.img` 两个固定名称。
+上游方案的 USB 下载 Loader 由 `k7-rkbin` 使用厂商 SPL/USBPLUG 打包，仅用于
+烧录通信；写入磁盘镜像的 SPL 则由上游源码编译，不能将这两者混为一谈。
+
+### d. 验证命令
+
+初始化环境后，先运行 `bitbake -p`，再运行
+`bitbake virtual/bootloader` 和 `bitbake kickpi-image-minimal`。
+用 `bitbake -e virtual/bootloader` 检查 `PN`、`SRCREV` 和固件路径。
+切换方案后应重新构建镜像，不可只替换 USB Loader 就认为存储上的启动链已切换。
+构建成功后仍需冷启动串口、SD/eMMC、Linux 启动及实际外设验证。

@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+#include "rk3576-u-boot.dtsi"
+
+/ {
+    chosen {
+        /* 保持与厂商方案一致的 SD → eMMC 尝试顺序。 */
+        u-boot,spl-boot-order = &sdmmc, &sdhci;
+    };
+};
+
+/* SPL 需要保留 SD 控制器和相关引脚节点。 */
+&sdmmc { bootph-all; };
+&sdmmc0_clk { bootph-all; };
+&sdmmc0_cmd { bootph-all; };
+&sdmmc0_det { bootph-all; };
+&sdmmc0_bus4 { bootph-all; };

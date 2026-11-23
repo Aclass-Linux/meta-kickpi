@@ -1,0 +1,5 @@
+# IDBLoader 位于 LBA64，FIT 位于 LBA16384；按启动方案选择对应产物。
+bootloader --ptable gpt
+part --source rawcopy --sourceparams="file=${K7_BOOT_PREFIX}-idbloader.img" --offset ${K7_LOADER_OFFSET_KIB}K --no-table
+part --source rawcopy --sourceparams="file=${K7_BOOT_PREFIX}-u-boot.itb" --offset ${K7_FIT_OFFSET_KIB}K --no-table
+part / --source rootfs --fstype ${K7_ROOT_FSTYPE} --label rootfs --uuid ${K7_ROOT_PARTUUID} --align ${K7_ROOT_ALIGNMENT_KIB}

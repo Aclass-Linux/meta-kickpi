@@ -18,7 +18,8 @@
       "sha256": "2fca0e4e05199bb186b9f9207b274a7df36428965da572ceedf63f86be13f5e5",
       "reference_sha256": "401967909576e4ee36a814116b2dac4fb34a4bb1921a14770b8b4ab0bb31affa",
       "metadata_change": "Added Yocto-required Upstream-Status",
-      "context_change": "Refreshed context for pinned Radxa 39cd993e5d6296635438e84f4576b3a9bf76f86e: include existing rk3576 entry; original rk3566 addition unchanged; verified patch --fuzz=0 without offset"
+      "context_change": "Refreshed context for pinned Radxa 39cd993e5d6296635438e84f4576b3a9bf76f86e: include existing rk3576 entry; original rk3566 addition unchanged; verified patch --fuzz=0 without offset",
+      "status": "已移除，仅保留历史来源和校验信息"
     },
     {
       "reference_path": "packages/bsp/kickpi/rkbin-tools/rk35/rk3576_ddr_lp4_1560MHz_lp5_2736MHz_v1.08.bin",
@@ -30,5 +31,6 @@
       "layer_path": "layers/meta-product-k7/recipes-core/boot-config/files/boot.cmd",
       "sha256": "4a9182264c1b1538fc1d5b5e700024494d5519830b40e535800be2bc588f61b6"
     }
-  ]
+  ],
+  "status": "历史输入记录；旧版 U-Boot 配方及兼容补丁已移除"
 }

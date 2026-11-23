@@ -6,7 +6,8 @@
 当前开发分支是 `bringup/k7-upstream-boot`，实际方案为 Rockchip BSP。
 
 `build-host-sources.json` 记录当前成功构建使用的 OE-Core、BitBake、meta-openembedded 提交，初始化脚本检出这些配套提交，避免三个构建基础仓库版本不匹配。
-RK 内核 develop-6.12、U-Boot v5、rkbin master 继续按要求使用 AUTOREV，不固定提交。
+RK 内核 develop-6.12 使用 AUTOREV；U-Boot v5 与 rkbin master 在配方中固定当前调试使用的提交。
+SPL 默认关闭 A/B，直接运行 `bitbake kickpi-image-minimal`，无需额外的 `-R` 配置。
 因此这套步骤复现构建环境和方案，不能保证以后生成逐字节相同的镜像。要追溯本轮固件，保存 deploy 下的 components、Linux commit、DDR 参数记录和镜像校验和。
 
 ## 1. 准备 Linux 主机

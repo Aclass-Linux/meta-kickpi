@@ -1,9 +1,27 @@
+# 层配置格式版本，用于兼容性检查，不是层的数量或 Yocto 版本。
 LCONF_VERSION = "7"
+
+# TOPDIR 是当前构建目录（例如 workspace/build-k7）。
+# 先将构建目录加入配置搜索路径，各层的 layer.conf 会继续扩展 BBPATH。
 BBPATH = "${TOPDIR}"
+# 初始化配方列表，各层的 layer.conf 再追加 .bb 和 .bbappend 搜索规则。
 BBFILES ?= ""
+
+# 本配置要求构建目录与 sources 位于同一个 workspace 目录。
+# 使用公共路径避免绑定用户名和工作区绝对位置，build-qemu 等同级目录也可复用。
+# 若构建目录移到其他位置，需要相应调整此变量。
+WORKSPACE_SOURCES = "${TOPDIR}/../sources"
+
+# 显式启用以下层，每个目录必须包含 conf/layer.conf；不会自动扫描 sources。
+# openembedded-core/meta：核心配方、构建类及 QEMU 等基础机器配置。
+# meta-openembedded/meta-oe：额外的通用软件配方。
+# meta-kickpi：K7 硬件 BSP，维护机器、引导程序和内核集成。
+# meta-product-k7：产品镜像、启动文件和镜像布局等产品配置。
+# ?= 表示尚未定义时赋值；反斜杠续行，列表中的路径以空格分隔。
+# 层的覆盖优先级还受各层 BBFILE_PRIORITY 等设置影响，并非仅由列表顺序决定。
 BBLAYERS ?= " \
-  ##OEROOT##/meta \
-  ##OEROOT##/../meta-openembedded/meta-oe \
-  ##OEROOT##/../meta-kickpi \
-  ##OEROOT##/../meta-kickpi/layers/meta-product-k7 \
-  "
+    ${WORKSPACE_SOURCES}/openembedded-core/meta \
+    ${WORKSPACE_SOURCES}/meta-openembedded/meta-oe \
+    ${WORKSPACE_SOURCES}/meta-kickpi \
+    ${WORKSPACE_SOURCES}/meta-kickpi/layers/meta-product-k7 \
+"
