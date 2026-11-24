@@ -15,8 +15,8 @@ WORKSPACE_SOURCES = "${TOPDIR}/../sources"
 # 显式启用以下层，每个目录必须包含 conf/layer.conf；不会自动扫描 sources。
 # openembedded-core/meta：核心配方、构建类及 QEMU 等基础机器配置。
 # meta-openembedded/meta-oe：额外的通用软件配方。
-# meta-kickpi：K7 硬件 BSP，维护机器、引导程序和内核集成。
-# meta-product-k7：产品镜像、启动文件和镜像布局等产品配置。
+# meta-kickpi：K7 BSP，提供硬件支持、默认启动文件和板级验证镜像。
+# meta-product-k7：产品镜像、装机包组及业务配置。
 # ?= 表示尚未定义时赋值；反斜杠续行，列表中的路径以空格分隔。
 # 层的覆盖优先级还受各层 BBFILE_PRIORITY 等设置影响，并非仅由列表顺序决定。
 BBLAYERS ?= " \
@@ -25,3 +25,5 @@ BBLAYERS ?= " \
     ${WORKSPACE_SOURCES}/meta-kickpi \
     ${WORKSPACE_SOURCES}/meta-kickpi/layers/meta-product-k7 \
 "
+# d. JeffyCN 路线的可选层。
+#BBLAYERS += "${WORKSPACE_SOURCES}/meta-rockchip"

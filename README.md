@@ -1,10 +1,9 @@
 # meta-kickpi
 
-KICKPI K7（RK3576）的自有 Yocto BSP。当前采用 Rockchip BSP 优先策略：
-Linux 跟踪 rockchip-linux/kernel 的 develop-6.12，U-Boot/SPL 跟踪
-rockchip-linux/u-boot 的 v5，DDR/BL31/BL32/打包工具跟踪 rkbin/master。
-Linux 使用 AUTOREV；U-Boot 与 rkbin 默认固定当前调试使用的提交，SPL 关闭 A/B。
-实际版本记录随产物部署，构建无需额外指定配置文件。
+KICKPI K7（RK3576）的自有 Yocto BSP。Linux 跟踪 rockchip-linux/kernel 的 develop-6.12。
+U-Boot/SPL 支持厂商 v5、固定上游版本、OE-Core 配方和 JeffyCN 配方四条路线。
+启动路线默认值见 `conf/machine/kickpi-k7.conf`，在构建环境中运行
+`bitbake-getvar K7_BOOT_STACK` 可查看当前选择。DDR 和 BL31 使用 rkbin 固件。
 Yocto 负责根文件系统、应用和 WIC 镜像。
 
 已启动 Linux 的历史厂商基线保存在本地 `baseline/k7-vendor-linux-boot`（`0a1f895`）。
@@ -24,17 +23,20 @@ Yocto 负责根文件系统、应用和 WIC 镜像。
 
 ```text
 conf/machine/kickpi-k7.conf            # 独立 CPU/板卡与 provider 选择
-recipes-bsp/u-boot/                   # 官方 U-Boot、K7 DTS/defconfig、固件输入
+recipes-bsp/u-boot/                   # U-Boot 配方、K7 DTS 和 defconfig
+recipes-bsp/rkbin/files/              # 共用 DDR 参数、v1.08 参考固件和处理脚本
 recipes-kernel/linux/
   linux-k7-rockchip_git.bb            # RK develop-6.12 内核
   files/rockchip-k7/                  # 当前 Linux 板级设备树
   linux-yocto_6.18.bbappend            # 未选中的历史上游方案
-layers/meta-product-k7/              # 产品 layer（与 BSP 同仓库，单独启用）
-  conf/include/                     # GPT/extlinux 共用启动布局
-  conf/templates/k7-upstream/        # 开发构建配置模板
-  recipes-core/images/              # kickpi-image-minimal
-  recipes-core/boot-config/         # extlinux、DTB、原始 initramfs 文件包
-  wic/                              # GPT/ext4 分区布局
+conf/templates/k7-bsp/              # 只加载核心层和 BSP 的验证模板
+recipes-core/images/                # BSP 验证镜像、initramfs 和共用镜像配置
+recipes-core/boot-config/            # extlinux、DTB 和 initramfs 安装
+files/wic/                          # K7 默认 GPT/ext4 分区布局
+layers/meta-product-k7/             # 产品 layer（与 BSP 同仓库，单独启用）
+  conf/templates/k7-upstream/       # 产品开发构建模板
+  recipes-core/images/              # kickpi-image-product
+  recipes-core/packagegroups/       # 产品装机软件清单
 docs/                               # 最终方案、来源清单与基础教材
 ```
 

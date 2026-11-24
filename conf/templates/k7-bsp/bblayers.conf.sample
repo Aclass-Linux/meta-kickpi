@@ -1,0 +1,10 @@
+LCONF_VERSION = "7"
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+# 构建目录与 sources 同级。板级验证只需要 OE-Core 与 K7 BSP。
+WORKSPACE_SOURCES = "${TOPDIR}/../sources"
+BBLAYERS ?= " \
+    ${WORKSPACE_SOURCES}/openembedded-core/meta \
+    ${WORKSPACE_SOURCES}/meta-kickpi \
+"

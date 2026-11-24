@@ -1,4 +1,4 @@
-# K7 当前构建方案：优先使用 Rockchip BSP
+# K7 厂商启动方案（K7_BOOT_STACK = "rockchip"）
 
 ## 选型原则
 
@@ -134,9 +134,12 @@ GNU make 命令行变量覆盖厂商 Makefile 的普通赋值，使其头文件�
 
 ### a. 选择方案
 
-默认 `K7_BOOT_STACK = "rockchip"`，保留现有厂商 U-Boot v5 构建流程。
+未显式选择时采用机器配置的默认值，可运行 `bitbake-getvar K7_BOOT_STACK` 查看生效值。
+
+显式设置 `K7_BOOT_STACK = "rockchip"`，保留现有厂商 U-Boot v5 构建流程。
 在构建目录的 `conf/local.conf` 中设置 `K7_BOOT_STACK = "mainline"`，即可选择
 `u-boot-k7-mainline`，从固定的上游 U-Boot v2026.01 源码构建 SPL 和 U-Boot。
+设置 `K7_BOOT_STACK = "oe"` 可选择 OE-Core 的 `u-boot` 配方，和 mainline 共用 K7 板级配置、DDR 和 BL31。
 本开关不切换 Linux 内核；上游方案的 K7 设备树、启动和外设尚待硬件验证。
 建议使用两个构建目录，避免混淆产物和串口日志。配置示例也位于模板中。
 
@@ -150,10 +153,10 @@ GNU make 命令行变量覆盖厂商 Makefile 的普通赋值，使其头文件�
 
 ### c. 镜像和 USB 烧录
 
-WIC 按方案选择 `k7-rockchip-*` 或 `k7-mainline-*` 文件，保持 IDBLoader 在
+WIC 按方案选择 `k7-rockchip-*`、`k7-mainline-*` 或 `k7-oe-*` 文件，保持 IDBLoader 在
 32 KiB、FIT 在 8 MiB、rootfs 在 16 MiB 的布局。USB 导出仍只有
 `usb-flash-k7/k7-rockchip-loader.bin` 和 `kickpi-k7-emmc.img` 两个固定名称。
-上游方案的 USB 下载 Loader 由 `k7-rkbin` 使用厂商 SPL/USBPLUG 打包，仅用于
+两条上游路线共用 `k7-mainline-firmware/usb-loader.bin`。该 USB 下载 Loader 由 `k7-rkbin` 使用厂商 SPL/USBPLUG 打包，仅用于
 烧录通信；写入磁盘镜像的 SPL 则由上游源码编译，不能将这两者混为一谈。
 
 ### d. 验证命令

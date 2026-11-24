@@ -1,0 +1,8 @@
+# K7 板级验证配置。
+MACHINE = "kickpi-k7"
+PACKAGE_CLASSES = "package_ipk"
+USER_CLASSES ?= "buildstats"
+PATCHRESOLVE = "noop"
+
+# 仅供板级调试，让开发人员能通过串口登录。
+EXTRA_IMAGE_FEATURES = "empty-root-password allow-empty-password"

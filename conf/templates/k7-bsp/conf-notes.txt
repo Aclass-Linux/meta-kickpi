@@ -1,0 +1,3 @@
+K7 板级验证镜像
+构建镜像：bitbake kickpi-image-minimal
+构建 SDK：bitbake kickpi-image-minimal -c populate_sdk

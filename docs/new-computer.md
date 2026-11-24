@@ -3,7 +3,8 @@
 ## 范围与版本
 
 本仓库同时包含 BSP 和产品 layer，不需要拷贝旧电脑的 tmp 或绝对路径配置。
-当前开发分支是 `bringup/k7-upstream-boot`，实际方案为 Rockchip BSP。
+要复现本文的厂商 v5 组合，在构建目录的 `conf/local.conf` 中选择 `K7_BOOT_STACK = "rockchip"`。
+若采用机器默认方案，用 `bitbake-getvar K7_BOOT_STACK` 检查生效值。
 
 `build-host-sources.json` 记录当前成功构建使用的 OE-Core、BitBake、meta-openembedded 提交，初始化脚本检出这些配套提交，避免三个构建基础仓库版本不匹配。
 RK 内核 develop-6.12 使用 AUTOREV；U-Boot v5 与 rkbin master 在配方中固定当前调试使用的提交。
@@ -90,11 +91,8 @@ export BB_ENV_PASSTHROUGH_ADDITIONS="${BB_ENV_PASSTHROUGH_ADDITIONS:+$BB_ENV_PAS
 
 ```bash
 cd ~/Yocto/workspace
-mkdir -p usb-flash-k7
-cp build-k7/tmp/deploy/images/kickpi-k7/k7-rockchip-loader.bin usb-flash-k7/
-cp -L build-k7/tmp/deploy/images/kickpi-k7/kickpi-image-minimal-kickpi-k7.rootfs.wic \
-  usb-flash-k7/kickpi-k7-emmc.img
-sha256sum usb-flash-k7/* > usb-flash-k7/SHA256SUMS
+cd build-k7/tmp/deploy/images/kickpi-k7/usb-flash-k7
+sha256sum k7-rockchip-loader.bin kickpi-k7-emmc.img
 ```
 
 WIC 改扩展名为 img，内容仍是完整磁盘镜像，包含 IDB、U-Boot FIT 和根文件系统。loader.bin 是供 USB 下载的临时 Loader，不能用单独 SPL 或 idbloader.img 代替。

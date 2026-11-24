@@ -11,7 +11,8 @@ PROVIDES += "virtual/bootloader"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 COMPATIBLE_MACHINE = "^kickpi-k7$"
-FILESEXTRAPATHS:prepend := "${THISDIR}/files/rockchip:"
+# files/rockchip 保存厂商 U-Boot 板级文件；../rkbin/files 提供共用的 DDR 输入。
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/rockchip:${THISDIR}/../rkbin/files:"
 # a. 输入来源：下载 U-Boot、rkbin，并从上述本地搜索路径读取固件、参数和脚本。
 # rkbin 提供原始 DDR 固件及修改工具；本地 v1.08 固件仅用于参数参考校验。
 # k7-ddr-1560.params 是当前 K7 的 DDR 参数输入，不是 DDR 初始化程序源码。
@@ -21,6 +22,7 @@ SRC_URI = "git://github.com/rockchip-linux/u-boot.git;protocol=https;branch=v5;n
            file://k7-ddr-1560.params \
            file://prepare-k7-ddr.py \
            file://configure-k7-v5.sh \
+           file://k7_rkbin.py \
            file://prepare-k7-firmware.py \
            file://verify-k7-boot.py \
            file://rk3576-kickpi-k7-u-boot.dtsi \
@@ -58,7 +60,8 @@ do_configure() {
     install -m 0644 ${UNPACKDIR}/rk3576-kickpi-k7.dts ${S}/dts/upstream/src/arm64/rockchip/
     install -m 0644 ${UNPACKDIR}/rk3576-kickpi-k7-u-boot.dtsi ${S}/arch/arm/dts/
     touch ${S}/.scmversion
-    oe_runmake -C ${S} rk3576_defconfig
+    # 先加载机器配置选定的 defconfig，再应用 K7 的启动选项。
+    oe_runmake -C ${S} "${UBOOT_MACHINE}"
     cd ${S}
     sh ${UNPACKDIR}/configure-k7-v5.sh
     oe_runmake olddefconfig

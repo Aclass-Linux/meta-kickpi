@@ -4,7 +4,7 @@
 对比对象是"同一块板（KICKPI K7 / RK3576）让 U-Boot 进镜像"的四种工程路线；
 不是四个 U-Boot 源码版本评测。逐方案给出：机制、现状、优劣、实现要点。
 
-当前已实现的两条路线共用以下板级约定：
+当前已接入的四条路线共用以下板级约定：
 
 - RK3576 启动链 = BootROM → idbloader.img（TPL+SPL）→ u-boot.itb（FIT）→ 内核；
 - TPL 是 rkbin 里的闭源 DDR 训练固件，需用 `k7-ddr-1560.params` 改写；
@@ -18,18 +18,18 @@
 
 | # | 路线 | U-Boot 源 | 厂商流程编排方 | 本层现状 |
 | - | --- | --- | --- | --- |
-| ① | 自研配方，全套自编排 | 厂商 v5 树 | 自己（boot_merger + INI sed） | **已实现**，`u-boot-k7-rockchip_git.bb`，当前默认 |
+| ① | 自研配方，全套自编排 | 厂商 v5 树 | 自己（boot_merger + INI sed） | **已实现**，`u-boot-k7-rockchip_git.bb` |
 | ② | 自研配方 + require OE .inc | 上游源码树 | 自己（binman 由上游 make 驱动） | **已实现**，`u-boot-k7-mainline_git.bb`，备用 |
-| ③ | bbappend 附加到 OE-Core 官方配方 | 上游（随 OE-Core 版本走） | OE-Core（u-boot.inc） | 未实现，可行（见下） |
-| ④ | bbappend 附加到 JeffyCN meta-rockchip | 厂商树（JeffyCN 镜像） | JeffyCN（make.sh + rkbin 集成） | 未实现，不建议（见下） |
+| ③ | bbappend 附加到 OE-Core 官方配方 | 上游（随 OE-Core 版本走） | OE-Core（u-boot.inc） | 已接入，`K7_BOOT_STACK = "oe"`，待构建和上板验证 |
+| ④ | bbappend 附加到 JeffyCN meta-rockchip | JeffyCN 镜像 | JeffyCN（make.sh + rkbin 集成） | 可选，需启用 JeffyCN 层 |
 
 选择器：`conf/machine/kickpi-k7.conf` 的 `K7_BOOT_STACK`
-（当前 "rockchip"→①，"mainline"→②）。部署产物用 `k7-${K7_BOOT_STACK}-` 前缀隔离，
+（当前 "rockchip"→①，"mainline"→②，"oe"→③，"jeffy"→④）。部署产物用 `k7-${K7_BOOT_STACK}-` 前缀隔离，
 WIC 按前缀选取 IDBLoader 和 FIT。Linux 内核仍由 `linux-k7-rockchip` 提供。
 
 ### 在当前工作区核对选择与产物
 
-在已初始化的构建环境中，执行以下命令。省略 `K7_BOOT_STACK` 时使用厂商路线；
+在已初始化的构建环境中，执行以下命令。省略 `K7_BOOT_STACK` 时采用机器配置的默认值，可用 `bitbake-getvar K7_BOOT_STACK` 核对；
 学习上游路线时，在对应构建目录的 `conf/local.conf` 设置 `K7_BOOT_STACK = "mainline"`。
 
 ```bash
@@ -41,11 +41,11 @@ bitbake kickpi-image-minimal                            # 生成 WIC 和 USB 烧
 WIC 把所选路线的 `*-idbloader.img` 和 `*-u-boot.itb` 写入固定偏移。
 镜像任务另在 `tmp/deploy/images/kickpi-k7/usb-flash-k7/` 导出两个固定文件：
 `k7-rockchip-loader.bin` 供 RKDevTool 建立下载连接，`kickpi-k7-emmc.img` 是写入
-eMMC 的整盘镜像。两条路线使用相同的导出名，应从同一次镜像构建成对取用。
+eMMC 的整盘镜像。四条路线使用相同的导出名，应从同一次镜像构建成对取用。
 
 ---
 
-## 方案 ①：自研配方，厂商流程（当前默认）
+## 方案 ①：自研配方，厂商流程
 
 配方：`recipes-bsp/u-boot/u-boot-k7-rockchip_git.bb`
 
@@ -91,88 +91,32 @@ RKBOOT/RK3576MINIALL_V5.ini（FlashData=改写后 DDR，FlashBoot=自编译 SPL�
 
 ---
 
-## 方案 ③：bbappend 附加到 OE-Core u-boot 配方（未实现，可行）
+## 方案 ③：扩展 OE-Core 的 u-boot 配方
 
-机制：直接消费 OE-Core 的 `u-boot_%.bb`（含其 SRC_URI/SRCREV/构建/部署/CVE
-补丁全套），本层只写一个 `u-boot_%.bbappend` 补板级差异。与 ② 的唯一实质区别：
-**版本选择权交给 OE-Core**——它升 U-Boot 版本，K7 自动跟随。
+在对应构建目录的 `conf/local.conf` 设置 `K7_BOOT_STACK = "oe"`，镜像将选择
+OE-Core 的 `u-boot`。本层 [bbappend](u-boot/u-boot_%25.bbappend) 按机器和方案加载
+[板级片段](u-boot/k7-upstream-board.inc)。方案 ② 也引用该片段。
 
-实现要点（全部素材已存在于 files/mainline/，可与 ② 共用）：
+| 对照项 | ② mainline | ③ oe |
+| --- | --- | --- |
+| 版本和补丁 | 本层指定 v2026.01、SRCREV 和补丁 | 由检出的 OE-Core 配方提供 |
+| 板级输入 | K7 defconfig、两份设备树文件、k7-rkbin 的 DDR 和 BL31 | 与 ② 共用 |
+| 部署 | `k7-mainline-*` | `k7-oe-*` |
 
-```bitbake
-# recipes-bsp/u-boot/u-boot_%.bbappend
-FILESEXTRAPATHS:prepend := "${THISDIR}/files/mainline:"
+在两个构建目录分别选择 mainline 和 oe，运行 `bitbake -e virtual/bootloader`，
+对照 PN、PV、SRCREV、SRC_URI 和 UBOOT_MACHINE。然后各运行
+`bitbake kickpi-image-minimal`，核对 IDB、FIT 和 USB 烧录目录。相同提交和板级输入
+不保证产物哈希相同，构建时间戳等信息也可能影响二进制。升级 OE-Core 后应重新核对
+补丁、构建和 SD/eMMC 冷启动。
 
-SRC_URI:append:kickpi-k7 = " file://kickpi-k7-rk3576_defconfig \
-    file://rk3576-kickpi-k7.dts file://rk3576-kickpi-k7-u-boot.dtsi"
+## 方案 ④：扩展 JeffyCN meta-rockchip
 
-UBOOT_MACHINE:kickpi-k7  = "kickpi-k7-rk3576_defconfig"
-UBOOT_MAKE_TARGET:kickpi-k7 = "all"
-UBOOT_BINARY:kickpi-k7   = "u-boot.itb"
-UBOOT_SUFFIX:kickpi-k7   = "itb"
-UBOOT_INITIAL_ENV:kickpi-k7 = ""
-
-do_compile[depends] += "${@'k7-rkbin:do_deploy' if d.getVar('MACHINE') == 'kickpi-k7' else ''}"
-EXTRA_OEMAKE:append:kickpi-k7 = \
-    " ROCKCHIP_TPL=${DEPLOY_DIR_IMAGE}/k7-mainline-firmware/rk3576-ddr-k7-1560.bin \
-      BL31=${DEPLOY_DIR_IMAGE}/k7-mainline-firmware/bl31.elf"
-
-do_configure:prepend:kickpi-k7() {
-    install -m 0644 ${UNPACKDIR}/kickpi-k7-rk3576_defconfig ${S}/configs/
-    install -m 0644 ${UNPACKDIR}/rk3576-kickpi-k7.dts ${S}/arch/arm/dts/
-    install -m 0644 ${UNPACKDIR}/rk3576-kickpi-k7-u-boot.dtsi ${S}/arch/arm/dts/
-}
-
-# idbloader 部署与尺寸校验与 ② 完全同构，从 ② 的 do_deploy:append/
-# do_compile:append 原样搬入；k7-rkbin 及其文件名契约原样复用。
-```
-
-注意：u-boot.inc 不认识 RK 的 idbloader，`do_deploy:append` 仍需自部署；
-u-boot.inc 已自带 addtask deploy（u-boot.inc:471），bbappend 无需重复声明。
-
-优点：
-- CVE 补丁自动继承，构建机制随 OE-Core 改进；
-- 板层只剩"K7 是什么"，U-Boot 构建机制零维护，审计面最小；
-- 可复用 ② 的板级输入，迁移后仍需验证任务依赖、部署命名和冷启动。
-
-代价/风险：
-- **版本漂移无闸门**：OE-Core 升版本即自动换 U-Boot，DDR/SPL 交棒须重新
-  硬件验证（参照 docs/k7-ddr-v108-v109-analysis.md 的教训：参数逐项匹配
-  也不保证可启动）；
-- 若要保留闸门，可加 `python __anonymous` 检查 PV 白名单，超出版本即
-  bbfatal 提示先做硬件回归——有此闸门后 ③ 的可复现性接近 ②。
-
-结论：上游赛道里结构最优，适合教学与长期跟踪上游；做第三方案
-的候选。要接入选择器，还需在机器配置中新增 `oe → u-boot` 映射，并让 WIC 和 USB 导出使用与部署文件一致的前缀。当前选择器仅接受 `rockchip` 和 `mainline`。
-
----
-
-## 方案 ④：bbappend 附加到 JeffyCN meta-rockchip（未实现，不建议）
-
-机制：把 JeffyCN meta-rockchip（github.com/JeffyCN/meta-rockchip）加入
-BBLAYERS，append 其 `u-boot-rockchip`（厂商流程：make.sh 打包 + rkbin 集成），
-本层补 K7 的 defconfig/dts。本质是"把 ① 外包给第三方 layer"，不是新机制。
-
-调研依据（docs/meta-rockchip-comparison.md，2026-11-05，固定提交
-f2fa9fd14571b855bb59a51da11616904a65f36d）：JeffyCN 提供 rk3576.inc 与
-RK3576 EVB machine，是两条 meta-rockchip 里唯一有 RK3576 支持的。
-
-优点：
-- 可复用已有的 RK3576 EVB 配置和厂商打包流程，K7 的 DDR 参数、设备树及镜像布局仍需适配；
-- 跟随 JeffyCN 的 Rockchip 生态持续更新。
-
-代价/风险（对照调研文档实证）：
-- 当前参考检出中的 `u-boot-rockchip.bb` 分别固定了 U-Boot 和 rkbin 的提交。若产品同时启用使用 AUTOREV 的图形配方，需另外记录其实际源码版本；
-- 该层依赖 meta-openembedded/meta-oe（当前 K7 模板已启用）；layer collection 与社区
-  meta-rockchip 同名（rockchip），二者不能同时入 BBLAYERS；
-- boot provider 定义权部分让渡：JeffyCN 改配方结构时本层 append 可能
-  静默失效，K7_BOOT_STACK 的双方案隔离机制被打破；
-- 对已完成 ①② 自研的本项目，收益只剩"复用厂商打包任务"，换来的却是
-  外部依赖与版本失控。
-
-结论：真正的适用场景是**项目冷启动**（从零快速拿到能启动的厂商栈）。
-本仓库 ① 已存在且经过验证，回头引入 ④ 属负收益；若未来评估，先重读
-meta-rockchip-comparison.md 并重新核对 JeffyCN 当时提交。
+在 `bblayers.conf` 添加 `BBLAYERS += "${WORKSPACE_SOURCES}/meta-rockchip"`，
+并在 `local.conf` 设置 `K7_BOOT_STACK = "jeffy"`。使用 JeffyCN 层而非同名社区层。
+[JeffyCN 扩展](u-boot/u-boot-rockchip.bbappend) 与 OE-Core 扩展位于同一目录，
+由 `conf/layer.conf` 的动态扫描规则收录。K7 适配固定 U-Boot `1c535d65` 和 rkbin `3e288fe8`，这对提交已通过交叉编译及打包检查。
+原配方的固定提交缺少 RK3576 所需的 defconfig 和 Loader INI。
+WIC 使用 `k7-jeffy-*`，USB 烧录文件仍在 `usb-flash-k7/`。
 
 ---
 
@@ -180,12 +124,11 @@ meta-rockchip-comparison.md 并重新核对 JeffyCN 当时提交。
 
 | 项目诉求 | 推荐 |
 | --- | --- |
-| 沿用当前固定源码和固件的厂商启动流程 | ①（当前默认） |
+| 沿用当前固定源码和固件的厂商启动流程 | ① |
 | 上游学习 / 减少厂商分叉 | ②，或迁移至 ③ |
-| 教学与跟踪上游、白拿 CVE 补丁 | ③（加 PV 白名单闸门后） |
-| 从零冷启动、快速拿厂商栈 | ④（仅新项目冷启动场景） |
+| 跟踪 OE-Core 选用的版本和补丁 | ③（升级后重新验证） |
 
-当前两条路线都使用 rkbin DDR/BL31 和 K7 板级参数，
+当前四条路线都使用 rkbin DDR/BL31 和 K7 板级参数，
 DDR 升级（如 v1.09）不因换路线而变简单；任何路线换 U-Boot/固件版本后，
 都需重走"构建 → 尺寸校验 → 冷启串口 → 存储/外设实测"的硬件验证闭环
 （AGENTS.md：build 与硬件结果分开报告）。

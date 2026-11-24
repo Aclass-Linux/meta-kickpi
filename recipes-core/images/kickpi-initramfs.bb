@@ -1,4 +1,4 @@
-SUMMARY = "Initramfs for the official K7 boot script's uInitrd"
+SUMMARY = "Early root filesystem for K7 extlinux boot"
 LICENSE = "MIT"
 
 inherit core-image

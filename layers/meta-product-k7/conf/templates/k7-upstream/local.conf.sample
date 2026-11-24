@@ -6,18 +6,23 @@
 
 # === 1. 机器目标：K7 与 QEMU 两种方案 ===
 # K7：conf/machine/kickpi-k7.conf，使用真实 RK3576 硬件。
-# 构建：bitbake kickpi-image-minimal
+# 构建：bitbake kickpi-image-product
 MACHINE = "kickpi-k7"
-# a. 厂商方案（默认）：厂商 U-Boot v5、源码 SPL、厂商工具打包。
+# 默认值见 kickpi-k7.conf，可用 bitbake-getvar K7_BOOT_STACK 查看生效值。
+# a. 厂商方案：厂商 U-Boot v5、源码 SPL、厂商工具打包。
 # b. 上游方案：U-Boot v2026.01、独立 rkbin 固件配方、上游 binman 打包。
-# 两种方案都使用厂商 DDR/BL31 二进制；此开关不会切换 Linux 内核。
+# c. OE-Core 方案：使用其 u-boot 配方的版本及补丁，与 b 共用 K7 板级配置。
+# 四种方案都使用厂商 DDR/BL31 二进制；此开关不会切换 Linux 内核。
 # 建议分别使用 build-k7 和 build-k7-mainline 构建目录；上游方案待硬件验证。
 #K7_BOOT_STACK = "rockchip"
 #K7_BOOT_STACK = "mainline"
+#K7_BOOT_STACK = "oe"
+# d. 先在 bblayers.conf 启用 JeffyCN 层。
+#K7_BOOT_STACK = "jeffy"
 # QEMU：注释上面的 MACHINE，再启用下面这一行；建议独立 build-qemu 目录。
 # 构建：bitbake core-image-minimal
 # 启动：runqemu qemuarm64 nographic
-# kickpi-image-minimal 限制为 K7，不能直接用于 QEMU。
+# kickpi-image-product 限制为 K7，不能直接用于 QEMU。
 #MACHINE = "qemuarm64"
 # 官方还提供以下模拟机器，配置在启用层的 conf/machine/ 下查找：
 #MACHINE = "qemuarm"

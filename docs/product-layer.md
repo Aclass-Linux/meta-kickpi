@@ -1,81 +1,35 @@
 # K7 BSP 与产品层
 
-> 本文记录厂商可启动基线。当前迁移分支的 provider、打包和启动配置见 [当前 RK BSP 方案](k7-rockchip-boot.md)。
+仓库提供两个 Yocto layer。BSP 提供独立可构建的板级验证镜像，产品层在 BSP 上定义出厂镜像。两层分别在 `BBLAYERS` 启用。
 
-本仓库同时提供两个独立 Yocto layer。Git 仓库负责版本管理，layer 负责构建职责；
-两者不要求一一对应。当前保留 BSP 的已有路径，产品层放在 layers/meta-product-k7，
-避免为首次分层新增远端仓库和迁移 BSP 的所有文件。
-
-## 职责
-
-| 路径 | 内容 | 修改时机 |
+| 层 | 构建目标 | 职责 |
 | --- | --- | --- |
-| 仓库根 conf/machine | K7 硬件、CPU、串口、provider | 板型或硬件支持变化 |
-| 仓库根 recipes-bsp / recipes-kernel | U-Boot、固件输入、Linux 配置和 DT | BSP 适配或升级 |
-| layers/meta-product-k7/recipes-core/images | 产品镜像的软件选择、格式和 SDK 构建入口 | 产品内容变化 |
-| layers/meta-product-k7/recipes-core/boot-config | k7-boot-files 包，安装 DTB、initramfs 和 extlinux.conf，依赖 kernel-image | 启动配置变化 |
-| layers/meta-product-k7/conf/include | GPT 与 extlinux 共用的根分区布局 | 分区方案变化 |
-| layers/meta-product-k7/wic | WIC 布局 | 存储交付方式变化 |
-| layers/meta-product-k7/conf/templates | 开发构建模板 | 团队标准构建配置变化 |
+| `meta-kickpi` | `kickpi-image-minimal` | 提供 Linux、U-Boot、固件和默认启动布局。验证镜像安装完整内核模块集，便于检查外设。 |
+| `meta-product-k7` | `kickpi-image-product` | 通过 `packagegroup-k7-product` 定义产品装机包和所需内核模块。产品镜像过滤开发配置里的免密登录选项。 |
 
-产品 layer 依赖 core 和 kickpi；BSP 本身不依赖产品 layer。
-应用配方和 packagegroup 按实际需求增加，本轮不创建空包组或专用发行版。
-rkbin/DDR 仍由原 U-Boot 配方使用，后续再独立成固件配方。
+## 独立构建 BSP 镜像
 
-## 已有工作区
-
-其他已有构建目录应确认 BBLAYERS 包含：
-
-```bitbake
-BBLAYERS ?= " \
-  ${TOPDIR}/../sources/openembedded-core/meta \
-  ${TOPDIR}/../sources/meta-openembedded/meta-oe \
-  ${TOPDIR}/../sources/meta-kickpi \
-  ${TOPDIR}/../sources/meta-kickpi/layers/meta-product-k7 \
-  "
-```
-
-保留个人 local.conf 的缓存、并发等配置，不用新模板覆盖已有文件。不需要清缓存。
+从 `workspace` 创建与 `sources` 同级的新构建目录。模板只启用 OE-Core 和 K7 BSP。
 
 ```bash
-cd /home/ryan/Yocto/workspace
-source sources/openembedded-core/oe-init-build-env build-k7
+TEMPLATECONF="$PWD/sources/meta-kickpi/conf/templates/k7-bsp" \
+    source sources/openembedded-core/oe-init-build-env build-k7-bsp
 bitbake-layers show-layers
-bitbake-layers show-recipes kickpi-image-minimal k7-boot-files
 bitbake kickpi-image-minimal
-bitbake kickpi-image-minimal -c populate_sdk
 ```
 
-镜像 target 与产物目录保持原名称。两个 layer 都必须启用；只启用 BSP 时没有产品镜像配方。
+开发模板允许空密码登录，适用于板级验证环境。BSP 镜像继续使用原有构建目标，已启用两层的 `build-k7` 也可直接构建它。
 
-## 新建构建目录
+## 构建产品镜像
 
-在新的终端，从同步完成的工作区根目录执行：
+在启用了 `meta-product-k7` 的 `build-k7` 中运行 `bitbake kickpi-image-product`。新建产品构建目录时使用 `layers/meta-product-k7/conf/templates/k7-upstream`。需要交叉开发 SDK 时，运行 `bitbake kickpi-image-product -c populate_sdk`。模板只初始化缺失的配置。
 
-```bash
-cd /home/ryan/Yocto/workspace
-export TEMPLATECONF="$PWD/sources/meta-kickpi/layers/meta-product-k7/conf/templates/k7-upstream"
-source sources/openembedded-core/oe-init-build-env build-k7-new
-unset TEMPLATECONF
-```
+产品软件和运行库添加到产品包组。首次接入外设时可先用 BSP 镜像验证硬件，再把对应 `kernel-module-*` 软件包装入产品镜像。
 
-模板只用于初始化缺失的配置，不会自动重写旧 build/conf。
-模板明确选择 kickpi-k7 和 x86_64 SDK 主机，并允许开发串口使用空 root 密码；
-它不是发布认证策略，正式产品需要单独设计账号。SDKMACHINE 与目标 ARM64 架构不同。
-按需在 local.conf 设置 DL_DIR / SSTATE_DIR；不把个人绝对路径存入团队模板。
+## 共用启动布局与独立烧录产物
 
-## 启动文件与任务依赖
+BSP 的 `recipes-core/images/k7-image-layout.inc` 提供默认 WIC 布局和烧录导出任务。两张镜像都使用 BSP 的 `k7-boot-files` 安装 extlinux 配置、Linux DTB 和 initramfs，并由 `kernel-image` 包提供内核。WIC 和 extlinux 共用 `conf/include/k7-boot-layout.inc` 中的根分区 PARTUUID。使用同一默认 PARTUUID 的 SD 卡和 eMMC 同时在线时，应核对板子实际选用的根分区。
 
-k7-boot-files 的 do_install 显式依赖 virtual/kernel:do_deploy，复制配套 DTB，
-将官方 boot.cmd 编译为 boot.scr，配套生成 uInitrd 和 armbianEnv 后打包进 rootfs。Image 由其显式依赖的标准 kernel-image 包提供，
-避免多个包拥有同一个 /boot/Image。原镜像 rootfs postprocess 不再直接复制文件。
-WIC 任务依赖 virtual/bootloader:do_deploy。这样文件归属、安装内容和依赖可以分别检查。
+在各自构建目录的 `tmp/deploy/images/kickpi-k7/` 下，BSP 镜像导出到 `usb-flash-k7/`，产品镜像导出到 `usb-flash-k7-product/`。两个目录都使用固定文件名 `k7-rockchip-loader.bin` 和 `kickpi-k7-emmc.img`。
 
-WKS 与启动文件配方共同 require conf/include/k7-boot-layout.inc。
-串口设备与波特率来自 machine；根分区 PARTUUID、文件系统、loader 偏移和根分区对齐值来自产品布局。
-本轮保持原有 32KiB loader、16MiB 根分区起点与 ext4，不同时改变存储协议。
-固定 PARTUUID 的多个介质不能据此自动区分，真机验证仍需核对实际启动介质。
-
-## 验收
-
-当前镜像已由用户验证进入 Linux/OpenEmbedded 用户态。版本、布局、已知告警和后续迁移边界统一见 [当前可启动方案](k7-official-boot.md)。
+验收时先确认对应镜像成功构建，再检查冷启动串口日志、根分区以及所需外设。
