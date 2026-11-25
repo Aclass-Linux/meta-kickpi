@@ -1,0 +1,49 @@
+#!/bin/sh
+set -eu
+umask 077
+
+state_dir=/var/lib/k7
+marker=$state_dir/root-ssh-provisioned
+public_key_file=/etc/k7/maintenance.pub
+authorized_keys=/root/.ssh/authorized_keys
+
+if [ "$(id -u)" != "0" ]; then
+    printf '%s\n' '请以 root 身份运行此命令。' >&2
+    exit 1
+fi
+
+mkdir -p "$state_dir"
+exec 9>"$state_dir/root-ssh.lock"
+flock -x 9
+[ ! -e "$marker" ] || exit 0
+
+if [ -s "$public_key_file" ]; then
+    IFS= read -r public_key < "$public_key_file" || [ -n "$public_key" ]
+else
+    printf '%s' '请粘贴开发机的 SSH 公钥，直接回车可暂时跳过：'
+    IFS= read -r public_key || exit 0
+    [ -n "$public_key" ] || exit 0
+fi
+
+case "$public_key" in
+    ssh-ed25519\ *|ssh-rsa\ *|ecdsa-sha2-*\ *|sk-*\ *) ;;
+    *)
+        printf '%s\n' '请输入一整行 OpenSSH 公钥。' >&2
+        exit 1
+        ;;
+esac
+if ! printf '%s\n' "$public_key" | ssh-keygen -l -f /dev/stdin >/dev/null 2>&1; then
+    printf '%s\n' 'SSH 公钥格式无效。' >&2
+    exit 1
+fi
+
+mkdir -p /root/.ssh
+chmod 0700 /root/.ssh
+touch "$authorized_keys"
+chmod 0600 "$authorized_keys"
+if ! grep -Fqx -- "$public_key" "$authorized_keys"; then
+    printf '\n%s\n' "$public_key" >> "$authorized_keys"
+fi
+
+touch "$marker"
+printf '%s\n' 'root 的 SSH 公钥已配置。'

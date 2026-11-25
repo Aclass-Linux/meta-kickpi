@@ -36,11 +36,24 @@ BSP 验证镜像和产品镜像都引用 `recipes-core/images/k7-image-features.
 #K7_SSH_IMAGE_FEATURE = ""
 ```
 
-重新构建并烧录所需镜像后，从板子串口运行 `ip -br addr` 查看 IP。为实际登录账号配置开发机的 SSH 公钥，再从开发机执行 `ssh 用户名@板子IP`。产品镜像继续过滤免密登录功能，部署时应配置有登录权限的维护账号，并将授权公钥安装到该账号的 `~/.ssh/authorized_keys`。
+产品镜像使用 OpenSSH 时，会安装 `k7-serial-ssh`。第一次以 root 登录调试串口，登录钩子会提示粘贴开发机的 SSH 公钥。如果设备已预置 `/etc/k7/maintenance.pub`，钩子会读取该文件。公钥安装成功后，后续串口登录会跳过初始化。
+
+在开发机可运行 `ssh-keygen -t ed25519` 生成新密钥，或者使用已有的公钥。只把 `.pub` 文件的整行内容粘贴到串口。直接回车可暂时跳过，下次串口登录会再次提示，也可在当前串口运行 `k7-enable-root-ssh` 重试。授权成功后，在 K7 串口运行 `ip addr show` 查看 IP，再从开发机执行 `ssh root@板子IP`。root 远程登录使用公钥认证。
 
 产品镜像为学习环境预设 root 串口密码 `199612`。在 `build-k7/conf/local.conf` 设置 `_K7_ROOT_PASSWORD:pn-kickpi-image-product` 可覆盖默认值，设为空字符串可跳过预设密码。正式部署应覆盖该学习密码或将其清空。
 
 产品软件和运行库添加到产品包组。首次接入外设时可先用 BSP 镜像验证硬件，再把对应 `kernel-module-*` 软件包装入产品镜像。
+
+## 板载网口默认地址
+
+两个镜像都使用 BSP 的 `recipes-core/images/k7-network-config.inc` 生成 systemd-networkd 配置，并使用同一组默认地址，掩码均为 `255.255.255.0`。
+
+| 网口 | 默认 IPv4 |
+| --- | --- |
+| GMAC0 | `192.168.133.10/24` |
+| GMAC1 | `192.168.133.20/24` |
+
+地址按 GMAC 的平台设备路径匹配。从串口运行 `networkctl status` 和 `ip addr show` 检查实际网口与地址。
 
 ## 构建与发布产品 SDK
 

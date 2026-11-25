@@ -18,6 +18,10 @@ IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_FEATURES = ""
 require recipes-core/images/k7-image-features.inc
 IMAGE_FEATURES:remove = "empty-root-password allow-empty-password allow-root-login serial-autologin-root"
+# OpenSSH 产品镜像在首次 root 串口登录时配置远程维护公钥。
+IMAGE_INSTALL:append = "${@bb.utils.contains('IMAGE_FEATURES', 'ssh-server-openssh', ' k7-serial-ssh', '', d)}"
+
+require recipes-core/images/k7-network-config.inc
 
 # 学习镜像的 root 串口密码，可在 local.conf 中覆盖。空值跳过设置。
 # 下划线开头的变量不会写入 OE-Core 导出的 testdata.json。

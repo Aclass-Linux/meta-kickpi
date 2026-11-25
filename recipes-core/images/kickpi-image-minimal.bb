@@ -13,5 +13,7 @@ require recipes-core/images/core-image-minimal.bb
 IMAGE_INSTALL:append = " kernel-modules k7-boot-files"
 require recipes-core/images/k7-image-features.inc
 
+require recipes-core/images/k7-network-config.inc
+
 # c. 两种 K7 镜像共用磁盘布局与烧录文件导出逻辑。
 require recipes-core/images/k7-image-layout.inc
