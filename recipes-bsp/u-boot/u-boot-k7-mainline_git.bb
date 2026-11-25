@@ -29,8 +29,8 @@ COMPATIBLE_MACHINE = "^kickpi-k7$"
 
 # --- 2. 固定源码版本 -----------------------------------------------------
 # PV 只是版本标签，不会自动跟随上游最新版；
-# 真正锁定源码的是 SRCREV（提交号）和 SRC_URI 中的 tag=v${PV}。
-# 若想跟随 master 学习：去掉 ;tag=v${PV}，SRCREV 改为 "${AUTOREV}"，
+# Scarthgap 通过 SRCREV 固定提交。
+# 若想跟随 master 学习：将 SRCREV 改为 "${AUTOREV}"，
 # PV 改成开发版本标识（如 "2026.01+git"）。代价：
 #   - AUTOREV 可能在解析阶段联网；
 #   - 上游变化可能要求同步调整设备树、defconfig 和补丁；
@@ -41,10 +41,9 @@ SRCREV = "127a42c7257a6ffbbd1575ed1cbaa8f5408a44b3"
 # 板级输入用 :append 追加，git 源码与本地文件两层分工一目了然。
 # 注意：= 覆盖后必须重写 git 段本身，否则配方就没有 fetch 源了；
 # :append 不会自动补空格，追加值开头要自带一个空格。
-SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master;tag=v${PV}"
+SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master"
 SRC_URI:append = " file://CVE-2026-46728.patch"
-FILESEXTRAPATHS:prepend := "${COREBASE}/meta/recipes-bsp/u-boot/files:"
-# OE-Core 将 Git 解包到 UNPACKDIR/BP，沿用与其匹配的默认 S。
+# Scarthgap 的 u-boot-common.inc 指定 Git 解包目录为 WORKDIR/git。
 DEPENDS += "bc-native dtc-native gnutls-native python3-pyelftools-native"
 
 K7_UPSTREAM_PREFIX = "k7-mainline"

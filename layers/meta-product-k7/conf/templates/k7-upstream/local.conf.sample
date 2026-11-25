@@ -8,15 +8,15 @@
 # K7：conf/machine/kickpi-k7.conf，使用真实 RK3576 硬件。
 # 构建：bitbake kickpi-image-product
 MACHINE = "kickpi-k7"
+INIT_MANAGER = "systemd"
 # 默认值见 kickpi-k7.conf，可用 bitbake-getvar K7_BOOT_STACK 查看生效值。
 # a. 厂商方案：厂商 U-Boot v5、源码 SPL、厂商工具打包。
 # b. 上游方案：U-Boot v2026.01、独立 rkbin 固件配方、上游 binman 打包。
-# c. OE-Core 方案：使用其 u-boot 配方的版本及补丁，与 b 共用 K7 板级配置。
+# Scarthgap 的 OE-Core U-Boot 2024.01 不提供 K7 的 oe 路线。
 # 四种方案都使用厂商 DDR/BL31 二进制；此开关不会切换 Linux 内核。
 # 建议分别使用 build-k7 和 build-k7-mainline 构建目录；上游方案待硬件验证。
 #K7_BOOT_STACK = "rockchip"
 #K7_BOOT_STACK = "mainline"
-#K7_BOOT_STACK = "oe"
 # d. 先在 bblayers.conf 启用 JeffyCN 层。
 #K7_BOOT_STACK = "jeffy"
 # QEMU：注释上面的 MACHINE，再启用下面这一行；建议独立 build-qemu 目录。

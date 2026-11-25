@@ -4,11 +4,9 @@ LICENSE = "GPL-2.0-with-Linux-syscall-note"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 inherit kernel
-# The Git fetcher unpacks to ${UNPACKDIR}/${BP}. Point S there so
-# kernel.bbclass moves it into STAGING_KERNEL_DIR before patch/license tasks.
-# The kernel class default S already names the staging directory and would
-# otherwise leave the downloaded tree unused.
-S = "${UNPACKDIR}/${BP}"
+# Scarthgap's Git fetcher unpacks to WORKDIR/git. The kernel class moves
+# this checkout to STAGING_KERNEL_DIR before patching and compiling.
+S = "${WORKDIR}/git"
 COMPATIBLE_MACHINE = "^kickpi-k7$"
 FILESEXTRAPATHS:prepend := "${THISDIR}/files/rockchip-k7:"
 SRC_URI = "git://github.com/rockchip-linux/kernel.git;protocol=https;branch=develop-6.12 \

@@ -2,9 +2,12 @@ LCONF_VERSION = "7"
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
-# 构建目录与 sources 同级。板级验证只需要 OE-Core 与 K7 BSP。
+# 构建目录与 sources 同级。板级验证启用 OE-Core 与 K7 BSP。
 WORKSPACE_SOURCES = "${TOPDIR}/../sources"
 BBLAYERS ?= " \
     ${WORKSPACE_SOURCES}/openembedded-core/meta \
     ${WORKSPACE_SOURCES}/meta-kickpi \
 "
+
+# 官方 iceoryx2 层由 repo 同步，确认支持当前 Yocto 分支后可启用。
+#BBLAYERS += "${WORKSPACE_SOURCES}/meta-rust-bin ${WORKSPACE_SOURCES}/meta-iceoryx2"

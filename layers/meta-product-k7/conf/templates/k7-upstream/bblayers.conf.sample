@@ -27,3 +27,6 @@ BBLAYERS ?= " \
 "
 # d. JeffyCN 路线的可选层。
 #BBLAYERS += "${WORKSPACE_SOURCES}/meta-rockchip"
+
+# e. 官方 iceoryx2 层由 repo 同步，确认支持当前 Yocto 分支后可启用。
+#BBLAYERS += "${WORKSPACE_SOURCES}/meta-rust-bin ${WORKSPACE_SOURCES}/meta-iceoryx2"

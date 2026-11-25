@@ -1,5 +1,6 @@
 # K7 板级验证配置。
 MACHINE = "kickpi-k7"
+INIT_MANAGER = "systemd"
 PACKAGE_CLASSES = "package_ipk"
 USER_CLASSES ?= "buildstats"
 PATCHRESOLVE = "noop"
