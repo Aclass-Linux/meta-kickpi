@@ -11,6 +11,7 @@ require recipes-core/images/core-image-minimal.bb
 # kernel-modules 拉入已打包的内核模块。k7-boot-files 安装 extlinux.conf、
 # Linux DTB 和 initramfs，并通过运行时依赖将 kernel-image 拉入根文件系统。
 IMAGE_INSTALL:append = " kernel-modules k7-boot-files"
+require recipes-core/images/k7-image-features.inc
 
 # c. 两种 K7 镜像共用磁盘布局与烧录文件导出逻辑。
 require recipes-core/images/k7-image-layout.inc
