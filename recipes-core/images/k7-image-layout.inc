@@ -11,6 +11,10 @@ IMAGE_FSTYPES = "ext4 wic"
 # WIC 根据模板把 IDBLoader 和 U-Boot FIT 写到固定偏移，再创建根分区。
 # 根分区的 PARTUUID 与 extlinux.conf 中的 root=PARTUUID 共用产品配置。
 WKS_FILE = "kickpi-k7-rockchip.wks.in"
+# 将模板展开和组盘放在同一次任务中，续编时也会生成所需的 .wks。
+# 禁用独立任务的执行。若 WKS_FILE 指向普通 .wks，则直接交给 WIC。
+do_write_wks_template[noexec] = "1"
+do_image_wic[prefuncs] += "${@'do_write_wks_template' if d.getVar('WKS_TEMPLATE_PATH') else ''}"
 # 使用 OE-Core 提供的默认 WIC 构建工具依赖。
 WKS_FILE_DEPENDS = "${WKS_FILE_DEPENDS_DEFAULT}"
 # 当前镜像使用 extlinux 和 WIC 布局。
@@ -26,7 +30,7 @@ python do_image_complete:append() {
     import shutil
 
     # DEPLOY_DIR_IMAGE 存放引导产物，IMGDEPLOYDIR 是本次镜像的暂存目录。
-    # K7_BOOT_PREFIX 为当前方案选择对应文件，例如 oe 方案使用 k7-oe 前缀。
+    # K7_BOOT_PREFIX 为当前方案选择对应文件，例如 rockchip 方案使用 k7-rockchip 前缀。
     deploy = Path(d.getVar("DEPLOY_DIR_IMAGE"))
     staged = Path(d.getVar("IMGDEPLOYDIR"))
     prefix = d.getVar("K7_BOOT_PREFIX")
@@ -47,7 +51,7 @@ python do_image_complete:append() {
     output = staged / d.getVar("K7_USB_FLASH_DIR")
     output.mkdir(parents=True, exist_ok=True)
     # rockchip 和 jeffy 使用包含本次构建 SPL 的 USB Loader。
-    # mainline 和 oe 共用 k7-rkbin 配方准备的 USB Loader。
+    # mainline 使用 k7-rkbin 配方准备的 USB Loader。
     loader = (prefix + "-loader.bin" if d.getVar("K7_BOOT_STACK") in ("rockchip", "jeffy")
               else "k7-mainline-firmware/usb-loader.bin")
     # 用固定名称导出两个文件。Loader 用于 USB 下载，整盘 WIC 用于写入 eMMC。

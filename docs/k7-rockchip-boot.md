@@ -93,7 +93,7 @@ bitbake kickpi-image-minimal
 - FIT 六个镜像的 SHA256、U-Boot/BL32/DTB 与实际输入一致性检查通过；BL31 入口为 `0x40060000`，与 FIT 选中段一致。
 - RK boot_merger 生成 IDB，通过当前 DDR/SPL 原始字节匹配及 8 MiB/16 MiB 边界检查。
 - 历史离线解析及展开后的 shell 语法检查曾通过；当时使用本地测试替代远程 revision 查询，不代表当前配置已完成重建或硬件验证。
-- 当前环境网络受限，完整 RK 内核构建、BitBake WIC 与实机验收尚未完成。已有下载日志不等于新内核构建成功。
+- Scarthgap 的 Rockchip v5 产品镜像已完成组盘，仍待实机验收。
 
 已删除本轮不再使用的上游 TF-A 配方、next-dev 专用 OP-TEE 补丁和旧 RK defconfig。当前配方只从 files/rockchip 读取本地适配输入；files/upstream 下的内容为未选中的历史实验。
 
@@ -139,7 +139,7 @@ GNU make 命令行变量覆盖厂商 Makefile 的普通赋值，使其头文件�
 显式设置 `K7_BOOT_STACK = "rockchip"`，保留现有厂商 U-Boot v5 构建流程。
 在构建目录的 `conf/local.conf` 中设置 `K7_BOOT_STACK = "mainline"`，即可选择
 `u-boot-k7-mainline`，从固定的上游 U-Boot v2026.01 源码构建 SPL 和 U-Boot。
-设置 `K7_BOOT_STACK = "oe"` 可选择 OE-Core 的 `u-boot` 配方，和 mainline 共用 K7 板级配置、DDR 和 BL31。
+`oe` 路线保留在 Wrynose 基线。Scarthgap 自带的 U-Boot 2024.01 缺少 RK3576 支持，使用上游 U-Boot 时请选择 `mainline`。
 本开关不切换 Linux 内核；上游方案的 K7 设备树、启动和外设尚待硬件验证。
 建议使用两个构建目录，避免混淆产物和串口日志。配置示例也位于模板中。
 

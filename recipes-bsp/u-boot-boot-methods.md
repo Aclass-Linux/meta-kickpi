@@ -4,7 +4,7 @@
 对比对象是"同一块板（KICKPI K7 / RK3576）让 U-Boot 进镜像"的四种工程路线；
 不是四个 U-Boot 源码版本评测。逐方案给出：机制、现状、优劣、实现要点。
 
-当前已接入的四条路线共用以下板级约定：
+Scarthgap 的三条路线和 Wrynose 的历史 `oe` 路线共用以下板级约定：
 
 - RK3576 启动链 = BootROM → idbloader.img（TPL+SPL）→ u-boot.itb（FIT）→ 内核；
 - TPL 是 rkbin 里的闭源 DDR 训练固件，需用 `k7-ddr-1560.params` 改写；
@@ -20,11 +20,11 @@
 | - | --- | --- | --- | --- |
 | ① | 自研配方，全套自编排 | 厂商 v5 树 | 自己（boot_merger + INI sed） | **已实现**，`u-boot-k7-rockchip_git.bb` |
 | ② | 自研配方 + require OE .inc | 上游源码树 | 自己（binman 由上游 make 驱动） | **已实现**，`u-boot-k7-mainline_git.bb`，备用 |
-| ③ | bbappend 附加到 OE-Core 官方配方 | 上游（随 OE-Core 版本走） | OE-Core（u-boot.inc） | 已接入，`K7_BOOT_STACK = "oe"`，待构建和上板验证 |
+| ③ | bbappend 附加到 OE-Core 官方配方 | 上游（随 OE-Core 版本走） | OE-Core（u-boot.inc） | 仅 Wrynose 基线，`K7_BOOT_STACK = "oe"` |
 | ④ | bbappend 附加到 JeffyCN meta-rockchip | JeffyCN 镜像 | JeffyCN（make.sh + rkbin 集成） | 可选，需启用 JeffyCN 层 |
 
 选择器：`conf/machine/kickpi-k7.conf` 的 `K7_BOOT_STACK`
-（当前 "rockchip"→①，"mainline"→②，"oe"→③，"jeffy"→④）。部署产物用 `k7-${K7_BOOT_STACK}-` 前缀隔离，
+（Scarthgap 的 "rockchip"→①，"mainline"→②，"jeffy"→④）。部署产物用 `k7-${K7_BOOT_STACK}-` 前缀隔离，
 WIC 按前缀选取 IDBLoader 和 FIT。Linux 内核仍由 `linux-k7-rockchip` 提供。
 
 ### 在当前工作区核对选择与产物
@@ -86,14 +86,15 @@ RKBOOT/RK3576MINIALL_V5.ini（FlashData=改写后 DDR，FlashBoot=自编译 SPL�
 
 代价：
 - require 的是 .inc 不是 u-boot_版本.bb，CVE 补丁清单须手动同步
-  （当前把 OE-Core files 路径手动加进 FILESEXTRAPATHS 即为此）；
+  （Scarthgap 分支将所需补丁放在本层配方的 files/mainline 中）；
 - 配方里须理解并维护 OE 变量覆盖规则，注释负担重。
 
 ---
 
 ## 方案 ③：扩展 OE-Core 的 u-boot 配方
 
-在对应构建目录的 `conf/local.conf` 设置 `K7_BOOT_STACK = "oe"`，镜像将选择
+以下步骤仅适用于 Wrynose 基线。Scarthgap 自带的 U-Boot 2024.01 缺少 RK3576 支持。
+在 Wrynose 构建目录的 `conf/local.conf` 设置 `K7_BOOT_STACK = "oe"`，镜像将选择
 OE-Core 的 `u-boot`。本层 [bbappend](u-boot/u-boot_%25.bbappend) 按机器和方案加载
 [板级片段](u-boot/k7-upstream-board.inc)。方案 ② 也引用该片段。
 
@@ -128,7 +129,7 @@ WIC 使用 `k7-jeffy-*`，USB 烧录文件仍在 `usb-flash-k7/`。
 | 上游学习 / 减少厂商分叉 | ②，或迁移至 ③ |
 | 跟踪 OE-Core 选用的版本和补丁 | ③（升级后重新验证） |
 
-当前四条路线都使用 rkbin DDR/BL31 和 K7 板级参数，
+上述路线都使用 rkbin DDR/BL31 和 K7 板级参数，
 DDR 升级（如 v1.09）不因换路线而变简单；任何路线换 U-Boot/固件版本后，
 都需重走"构建 → 尺寸校验 → 冷启串口 → 存储/外设实测"的硬件验证闭环
 （AGENTS.md：build 与硬件结果分开报告）。

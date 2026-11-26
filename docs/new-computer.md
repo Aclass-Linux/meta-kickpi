@@ -6,7 +6,7 @@
 要复现本文的厂商 v5 组合，在构建目录的 `conf/local.conf` 中选择 `K7_BOOT_STACK = "rockchip"`。
 若采用机器默认方案，用 `bitbake-getvar K7_BOOT_STACK` 检查生效值。
 
-`build-host-sources.json` 记录当前成功构建使用的 OE-Core、BitBake、meta-openembedded 提交，初始化脚本检出这些配套提交，避免三个构建基础仓库版本不匹配。
+`build-host-sources.json` 固定 Scarthgap 的 OE-Core、BitBake 2.8、meta-openembedded 和提供 Poky 的 meta-yocto 版本。
 RK 内核 develop-6.12 使用 AUTOREV；U-Boot v5 与 rkbin master 在配方中固定当前调试使用的提交。
 SPL 默认关闭 A/B，直接运行 `bitbake kickpi-image-minimal`，无需额外的 `-R` 配置。
 因此这套步骤复现构建环境和方案，不能保证以后生成逐字节相同的镜像。要追溯本轮固件，保存 deploy 下的 components、Linux commit、DDR 参数记录和镜像校验和。
@@ -32,35 +32,39 @@ export LANG=en_US.UTF-8
 ## 2. 克隆并准备配套仓库
 
 ```bash
-mkdir -p ~/Yocto/workspace/sources
-cd ~/Yocto/workspace/sources
-git clone --branch bringup/k7-upstream-boot https://github.com/Aclass-Linux/meta-kickpi.git
+mkdir -p ~/Yocto/workspace-scarthgap/sources
+cd ~/Yocto/workspace-scarthgap/sources
+git clone --branch k7-scarthgap-local https://github.com/Aclass-Linux/meta-kickpi.git
 python3 meta-kickpi/scripts/prepare-build-host.py
 ```
 
-脚本将三个基础仓库放到 meta-kickpi 同级目录，并检出记录的提交。已有仓库存在未提交改动时脚本会停止；它会将干净仓库切换到记录提交，勿对正在使用的其他工作区随意运行。
+脚本将四个基础仓库放到 meta-kickpi 同级目录，并检出记录的提交。已有仓库存在未提交改动时脚本会停止；它会将干净仓库切换到记录提交，勿对正在使用的其他工作区随意运行。
 
 目录应为：
 
 ```text
-workspace/sources/bitbake
-workspace/sources/openembedded-core
-workspace/sources/meta-openembedded
-workspace/sources/meta-kickpi
+workspace-scarthgap/sources/bitbake
+workspace-scarthgap/sources/openembedded-core
+workspace-scarthgap/sources/meta-openembedded
+workspace-scarthgap/sources/meta-yocto
+workspace-scarthgap/sources/meta-kickpi
 ```
 
 ## 3. 初始化与构建
 
 ```bash
-cd ~/Yocto/workspace
+cd ~/Yocto/workspace-scarthgap
+export PATH="$PWD/sources/bitbake/bin:$PATH"
 export TEMPLATECONF="$PWD/sources/meta-kickpi/layers/meta-product-k7/conf/templates/k7-upstream"
 source sources/openembedded-core/oe-init-build-env build-k7
 unset TEMPLATECONF
 bitbake-layers show-layers
-bitbake kickpi-image-minimal
+bitbake -p
+bitbake kickpi-image-product
+bitbake kickpi-image-product -c populate_sdk
 ```
 
-模板已选择 kickpi-k7、BSP 与产品 layer；不要复制旧电脑的 bblayers.conf。
+模板选择 kickpi-k7、Poky、systemd、IPK 和 K7 两个层。SD/eMMC 板级验证可单独构建 `kickpi-image-minimal`。
 开发镜像允许 root 空密码，正式产品应另行配置账户。
 内存较小时可在 build-k7/conf/local.conf 添加：
 
@@ -70,6 +74,20 @@ PARALLEL_MAKE = "-j4"
 ```
 
 按需迁移旧 build-k7/downloads 和 sstate-cache 加速，tmp 不必迁移。
+
+## 可选的 iceoryx2 验证
+
+产品镜像的默认构建配置可以独立完成。若要验证官方 C 接口，在 `sources/`
+中准备 `meta-iceoryx2` 和提供 `cargo_bin` 的 `meta-rust-bin`。在已初始化的
+构建环境中启用这两个层后，先单独构建：
+
+```bash
+bitbake-layers add-layer ../sources/meta-rust-bin
+bitbake-layers add-layer ../sources/meta-iceoryx2
+bitbake iceoryx2-c
+```
+
+库编译、镜像和 SDK 装包以及上板通信待验证。
 
 ## 4. 需要代理时
 
@@ -90,14 +108,14 @@ export BB_ENV_PASSTHROUGH_ADDITIONS="${BB_ENV_PASSTHROUGH_ADDITIONS:+$BB_ENV_PAS
 只有 BitBake 最终报告全部任务成功，才使用本轮产物：
 
 ```bash
-cd ~/Yocto/workspace
-cd build-k7/tmp/deploy/images/kickpi-k7/usb-flash-k7
+cd ~/Yocto/workspace-scarthgap
+cd build-k7/tmp/deploy/images/kickpi-k7/usb-flash-k7-product
 sha256sum k7-rockchip-loader.bin kickpi-k7-emmc.img
 ```
 
 WIC 改扩展名为 img，内容仍是完整磁盘镜像，包含 IDB、U-Boot FIT 和根文件系统。loader.bin 是供 USB 下载的临时 Loader，不能用单独 SPL 或 idbloader.img 代替。
 
-将 usb-flash-k7 复制到 Windows，安装板厂提供的 DriverAssistant 和 RKDevTool。烧录会覆盖 eMMC，请先备份所需数据。
+将 usb-flash-k7-product 复制到 Windows，安装板厂提供的 DriverAssistant 和 RKDevTool。烧录会覆盖 eMMC，请先备份所需数据。
 
 1. 拔掉 SD 卡，关闭板子电源，用数据线连接板子的 USB OTG 烧录口与电脑。
 2. 按住 RECOVER 再上电，RKDevTool 显示 LOADER 设备后松开；空 eMMC 也可能显示 MASKROM。
@@ -105,4 +123,4 @@ WIC 改扩展名为 img，内容仍是完整磁盘镜像，包含 IDB、U-Boot F
 4. 点击执行并等待成功，再断电重启。完整 WIC 不走“升级固件/update.img”入口。不同 RKDevTool 版本布局可能不同；若没有 Loader 与原始镜像下载入口，先按该版本说明导入对应下载配置。
 5. 串口使用 1500000、8N1、无流控，检查 DDR、SPL、U-Boot、Linux 日志。进入系统后执行 `findmnt -no SOURCE /` 与 `lsblk` 核对根设备；MMC 对应 eMMC、SD 对应 SD 卡，可查看 `/sys/block/mmcblk*/device/type`。
 
-当前记录的本机镜像构建已全部成功，USB/eMMC 烧录和板上外设仍需要按实际交付组合验收。
+产品镜像已完成 Scarthgap 组盘。SDK 安装器输出到 `build-k7/tmp/deploy/sdk/`。SDK 安装和交叉编译、USB/eMMC 烧录及板上外设仍待验收。

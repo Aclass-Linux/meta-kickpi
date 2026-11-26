@@ -8,6 +8,7 @@
 # K7：conf/machine/kickpi-k7.conf，使用真实 RK3576 硬件。
 # 构建：bitbake kickpi-image-product
 MACHINE = "kickpi-k7"
+DISTRO = "poky"
 INIT_MANAGER = "systemd"
 # 默认值见 kickpi-k7.conf，可用 bitbake-getvar K7_BOOT_STACK 查看生效值。
 # a. 厂商方案：厂商 U-Boot v5、源码 SPL、厂商工具打包。

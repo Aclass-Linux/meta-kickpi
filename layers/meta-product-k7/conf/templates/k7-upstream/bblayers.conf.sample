@@ -1,5 +1,6 @@
 # 层配置格式版本，用于兼容性检查，不是层的数量或 Yocto 版本。
 LCONF_VERSION = "7"
+POKY_BBLAYERS_CONF_VERSION = "2"
 
 # TOPDIR 是当前构建目录（例如 workspace/build-k7）。
 # 先将构建目录加入配置搜索路径，各层的 layer.conf 会继续扩展 BBPATH。
@@ -14,6 +15,7 @@ WORKSPACE_SOURCES = "${TOPDIR}/../sources"
 
 # 显式启用以下层，每个目录必须包含 conf/layer.conf；不会自动扫描 sources。
 # openembedded-core/meta：核心配方、构建类及 QEMU 等基础机器配置。
+# meta-yocto/meta-poky：Poky 发行版配置。
 # meta-openembedded/meta-oe：额外的通用软件配方。
 # meta-kickpi：K7 BSP，提供硬件支持、默认启动文件和板级验证镜像。
 # meta-product-k7：产品镜像、装机包组及业务配置。
@@ -21,6 +23,7 @@ WORKSPACE_SOURCES = "${TOPDIR}/../sources"
 # 层的覆盖优先级还受各层 BBFILE_PRIORITY 等设置影响，并非仅由列表顺序决定。
 BBLAYERS ?= " \
     ${WORKSPACE_SOURCES}/openembedded-core/meta \
+    ${WORKSPACE_SOURCES}/meta-yocto/meta-poky \
     ${WORKSPACE_SOURCES}/meta-openembedded/meta-oe \
     ${WORKSPACE_SOURCES}/meta-kickpi \
     ${WORKSPACE_SOURCES}/meta-kickpi/layers/meta-product-k7 \

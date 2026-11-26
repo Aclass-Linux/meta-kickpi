@@ -1,11 +1,13 @@
 LCONF_VERSION = "7"
+POKY_BBLAYERS_CONF_VERSION = "2"
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
-# 构建目录与 sources 同级。板级验证启用 OE-Core 与 K7 BSP。
+# 构建目录与 sources 同级。板级验证启用 OE-Core、Poky 和 K7 BSP。
 WORKSPACE_SOURCES = "${TOPDIR}/../sources"
 BBLAYERS ?= " \
     ${WORKSPACE_SOURCES}/openembedded-core/meta \
+    ${WORKSPACE_SOURCES}/meta-yocto/meta-poky \
     ${WORKSPACE_SOURCES}/meta-kickpi \
 "
 
