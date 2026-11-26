@@ -7,13 +7,13 @@
 若采用机器默认方案，用 `bitbake-getvar K7_BOOT_STACK` 检查生效值。
 
 `build-host-sources.json` 固定 Scarthgap 的 OE-Core、BitBake 2.8、meta-openembedded 和提供 Poky 的 meta-yocto 版本。
-RK 内核 develop-6.12 使用 AUTOREV；U-Boot v5 与 rkbin master 在配方中固定当前调试使用的提交。
+开发构建默认跟踪 RK 内核 develop-6.12。U-Boot v5 与 rkbin 在配方中固定提交。发布时通过 `K7_KERNEL_SRCREV` 固定已验收的内核提交。
 SPL 默认关闭 A/B，直接运行 `bitbake kickpi-image-minimal`，无需额外的 `-R` 配置。
 因此这套步骤复现构建环境和方案，不能保证以后生成逐字节相同的镜像。要追溯本轮固件，保存 deploy 下的 components、Linux commit、DDR 参数记录和镜像校验和。
 
 ## 1. 准备 Linux 主机
 
-当前构建主机为 Ubuntu 26.04.1 LTS x86_64。RK boot_merger 是 x86_64 工具，不能直接在 ARM 主机运行。使用普通用户构建；建议预留至少 150 GB 可用空间，并根据内存调整并发。
+推荐使用 Ubuntu 24.04 LTS x86_64。Ubuntu 26.04 的 WSL 2 已用于本项目的产品镜像构建，Scarthgap 5.0.21 未验证该主机环境。RK boot_merger 需要 x86_64 构建主机。用普通用户构建，预留至少 150 GB 可用空间，并根据内存调整并发。 [Scarthgap 主机要求](https://docs.yoctoproject.org/5.0.21/ref-manual/system-requirements.html#supported-linux-distributions)
 
 Ubuntu/Debian 安装基础依赖（其他发行版需要替换包名）：
 
@@ -22,6 +22,7 @@ sudo apt update
 sudo apt install build-essential git python3 python3-pip python3-pexpect \
   gawk wget diffstat unzip texinfo chrpath socat cpio xz-utils zstd \
   debianutils file locales libacl1 libssl-dev libncurses-dev \
+  python3-git python3-jinja2 python3-subunit \
   bison flex bc lz4 iputils-ping rsync
 sudo locale-gen en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -65,7 +66,7 @@ bitbake kickpi-image-product -c populate_sdk
 ```
 
 模板选择 kickpi-k7、Poky、systemd、IPK 和 K7 两个层。SD/eMMC 板级验证可单独构建 `kickpi-image-minimal`。
-开发镜像允许 root 空密码，正式产品应另行配置账户。
+BSP 验证模板允许 root 空密码。产品镜像的学习用配置与发布覆盖方式见 [K7 产品层说明](product-layer.md#发布配置)。
 内存较小时可在 build-k7/conf/local.conf 添加：
 
 ```bitbake
@@ -77,9 +78,11 @@ PARALLEL_MAKE = "-j4"
 
 ## 可选的 iceoryx2 验证
 
-产品镜像的默认构建配置可以独立完成。若要验证官方 C 接口，在 `sources/`
-中准备 `meta-iceoryx2` 和提供 `cargo_bin` 的 `meta-rust-bin`。在已初始化的
-构建环境中启用这两个层后，先单独构建：
+Scarthgap 的 repo 清单会将 `meta-iceoryx2` 和提供 `cargo_bin` 的 `meta-rust-bin`
+同步到 `sources/`。通过手工克隆初始化的工作区可从工作区根目录运行
+`python3 sources/meta-kickpi/scripts/prepare-build-host.py --with-iceoryx2`
+获取相同的固定版本。官方 iceoryx2 C 配方为 0.10.0，Rust 层固定在提供 Rust 1.91.1 的提交。
+在已初始化的构建环境中启用这两个层，再单独编译配方。
 
 ```bash
 bitbake-layers add-layer ../sources/meta-rust-bin

@@ -9,7 +9,7 @@
 
 ## 独立构建 BSP 镜像
 
-从 `workspace` 创建与 `sources` 同级的新构建目录。模板只启用 OE-Core 和 K7 BSP。
+从 `workspace-scarthgap` 创建与 `sources` 同级的新构建目录。该模板启用 OE-Core、Poky 和 K7 BSP。先按 [新电脑配置](new-computer.md#3-初始化与构建) 把独立检出的 BitBake 加入 `PATH`。
 
 ```bash
 TEMPLATECONF="$PWD/sources/meta-kickpi/conf/templates/k7-bsp" \
@@ -54,6 +54,24 @@ BSP 验证镜像和产品镜像都引用 `recipes-core/images/k7-image-features.
 | GMAC1 | `192.168.133.20/24` |
 
 地址按 GMAC 的平台设备路径匹配。从串口运行 `networkctl status` 和 `ip addr show` 检查实际网口与地址。
+
+## 发布配置
+
+开发时可沿用默认配置。交付时，在独立构建目录的 `conf/local.conf` 固定已验收的内核提交并覆盖学习用的登录及网络设置。内核提交从上一轮验证产物 `tmp/deploy/images/kickpi-k7/k7-rockchip-linux-commit.txt` 取值。
+
+```bitbake
+# 下方 SHA 来自一次产品构建。交付时用实际通过上板验收的提交替换。
+K7_KERNEL_SRCREV = "470f9dccbdc42e7b8a824d0a5c5640a10e9457d2"
+
+# 跳过学习密码，交付前由部署流程配置能实际登录的维护账户或公钥。
+_K7_ROOT_PASSWORD:pn-kickpi-image-product = ""
+
+# 交回系统默认的有线网络配置。由站点 DHCP 或逐台设备配置地址。
+K7_GMAC0_IPV4:pn-kickpi-image-product = ""
+K7_GMAC1_IPV4:pn-kickpi-image-product = ""
+```
+
+同一次发布用同一份构建配置生成产品镜像和 SDK。发布前在目标板上检查网口地址、预期的维护入口以及 SDK 编译的应用能否运行。
 
 ## 构建与发布产品 SDK
 

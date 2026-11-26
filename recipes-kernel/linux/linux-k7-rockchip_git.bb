@@ -2,6 +2,10 @@ SUMMARY = "Rockchip BSP Linux kernel for KICKPI K7"
 HOMEPAGE = "https://github.com/rockchip-linux/kernel"
 LICENSE = "GPL-2.0-with-Linux-syscall-note"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
+# LICENSE_PATH is excluded from the task hash. Track the backported text
+# explicitly so existing builds refresh both the license files and SBOM.
+do_populate_lic[file-checksums] += "${K7_BSP_LICENSE_DIR}/GPL-2.0-with-Linux-syscall-note:True"
+do_create_spdx[file-checksums] += "${K7_BSP_LICENSE_DIR}/GPL-2.0-with-Linux-syscall-note:True"
 
 inherit kernel
 # Scarthgap's Git fetcher unpacks to WORKDIR/git. The kernel class moves
@@ -11,9 +15,11 @@ COMPATIBLE_MACHINE = "^kickpi-k7$"
 FILESEXTRAPATHS:prepend := "${THISDIR}/files/rockchip-k7:"
 SRC_URI = "git://github.com/rockchip-linux/kernel.git;protocol=https;branch=develop-6.12 \
            file://rk3576-kickpi-k7.dts"
-# Follow the selected Rockchip branch, as requested. Record each built commit.
+# Development follows the Rockchip branch. Set K7_KERNEL_SRCREV to a full
+# commit SHA in release builds. Every build records its actual commit.
 PV = "6.12+git"
-SRCREV = "${AUTOREV}"
+K7_KERNEL_SRCREV ?= "${AUTOREV}"
+SRCREV = "${K7_KERNEL_SRCREV}"
 LINUX_VERSION = "6.12"
 DEPENDS += "openssl-native flex-native"
 # The vendor Makefile prefixes this with srctree for includes and embeds it

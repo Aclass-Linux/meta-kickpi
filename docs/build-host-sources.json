@@ -18,5 +18,17 @@
     "name": "meta-yocto",
     "url": "https://git.yoctoproject.org/meta-yocto",
     "revision": "34e15a437a792db6778fe1bf62617b307c7f9945"
+  },
+  {
+    "name": "meta-iceoryx2",
+    "url": "https://github.com/eclipse-iceoryx/meta-iceoryx2.git",
+    "revision": "de61fae35da436e01ef0c463c6b57f57432fea36",
+    "optional": "iceoryx2"
+  },
+  {
+    "name": "meta-rust-bin",
+    "url": "https://github.com/rust-embedded/meta-rust-bin.git",
+    "revision": "c1f9ea3e59fba2c181d29ab7b896055c16f4a94d",
+    "optional": "iceoryx2"
   }
 ]
